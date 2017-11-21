@@ -1,0 +1,14 @@
+.j-ui-slide-from-top-enter, .j-ui-slide-from-top-leave-active {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-100%)!important;
+}
+.j-ui-slide-from-bottom-enter, .j-ui-slide-from-bottom-leave-active {
+  opacity: 0;
+  transform: translateX(-50%) translateY(100%)!important;
+}
+.j-ui-slide-from-top-enter-active,
+.j-ui-slide-from-top-leave-active,
+.j-ui-slide-from-bottom-enter-active,
+.j-ui-slide-from-bottom-leave-active {
+  transition: all 400ms cubic-bezier(.36,.66,.04,1);
+}

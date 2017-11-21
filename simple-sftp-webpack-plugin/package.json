@@ -1,0 +1,17 @@
+{
+  "name": "@jukejia/simple-sftp-webpack-plugin",
+  "version": "0.0.1",
+  "main": "index.js",
+  "keywords": [
+    "webpack",
+    "sftp"
+  ],
+  "dependencies": {
+    "scp2": "0.5.0"
+  },
+  "devDependencies": {},
+  "description": "通过 sftp 上传文件",
+  "repository": "https://github.com/YLTDco/jukejia-frontends/simple-sftp-webpack-plugin",
+  "author": "i@4leaf.me",
+  "license": "UNLICENSED"
+}
