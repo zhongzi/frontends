@@ -361,7 +361,7 @@ export default {
           return
         }
         vm.isPullingUp = true
-        vm._load(false)
+        vm._load(reset)
       })
     }
   }
