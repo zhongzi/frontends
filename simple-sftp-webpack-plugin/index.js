@@ -10,7 +10,7 @@ function SimpleSftpWebpackPlugin(options) {
 SimpleSftpWebpackPlugin.prototype.apply = function (compiler) {
   var self = this;
 
-  compiler.plugin('after-emit', function (_, callback) {
+  compiler.plugin('done', function () {
     var privateKey = self.options.privateKey;
     if (!privateKey) {
       const homedir = os.homedir();
@@ -41,10 +41,10 @@ SimpleSftpWebpackPlugin.prototype.apply = function (compiler) {
     const src = self.options.src;
     client.scp(
       src, dest, function (err) {
-        if (!err) {
-          console.log('Uploaded File: ' + src + '->' + self.options.path);
+        if (err) {
+          throw err
         }
-        callback(err);
+        console.log('Uploaded File: ' + src + '->' + self.options.path);
       }
     );
   });
