@@ -2,4 +2,3 @@ node_modules
 .babelrc
 .eslintrc.js
 .npmrc
-yarn.lock
