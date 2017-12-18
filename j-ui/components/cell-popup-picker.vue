@@ -1,6 +1,6 @@
 <template>
 <div class="j-ui-cell-popup-picker">
-  <j-cell-input :title="title" :value="text" :height="height" :required="required" :readonly="true" :disabled="true" :placeholder="placeholder" @click.native="popupVisible = true">
+  <j-cell-input :title="title" :value="text" :height="height" :required="required" :readonly="true" :disabled="true" :placeholder="placeholder" @click.native="onPopupPicker">
     <i slot="right" class="iconfont icon-next"></i>
   </j-cell-input>
   <j-popup-picker :show='popupVisible' @on-hide="popupVisible = false" :data="[data]" :textKey="textKey" v-model="selectedIndexes"></j-popup-picker>
@@ -83,10 +83,8 @@ export default {
         return null
       }
       return this.data[this.selectedIndex]
-    }
-  },
-  watch: {
-    value (val) {
+    },
+    valueChanged (val) {
       let index = null
       if (val) {
         index = this.data.indexOf(val)
@@ -96,9 +94,23 @@ export default {
       }
       this.selectedIndex = index
     },
+    onPopupPicker () {
+      if (this.readonly) {
+        return
+      }
+      this.popupVisible = true
+    }
+  },
+  watch: {
+    value (val) {
+      this.valueChanged(val)
+    },
     currentValue (val) {
       this.$emit('input', val)
     }
+  },
+  created () {
+    this.valueChanged(this.value)
   },
   mounted () {
     this.$emit('input', this.currentValue)
