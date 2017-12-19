@@ -84,6 +84,14 @@ export default {
       }
       return this.data[this.selectedIndex]
     },
+    onPopupPicker () {
+      if (this.readonly) {
+        return
+      }
+      this.popupVisible = true
+    }
+  },
+  methods: {
     valueChanged (val) {
       let index = null
       if (val) {
@@ -93,12 +101,6 @@ export default {
         }
       }
       this.selectedIndex = index
-    },
-    onPopupPicker () {
-      if (this.readonly) {
-        return
-      }
-      this.popupVisible = true
     }
   },
   watch: {
