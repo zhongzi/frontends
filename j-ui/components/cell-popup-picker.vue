@@ -83,12 +83,6 @@ export default {
         return null
       }
       return this.data[this.selectedIndex]
-    },
-    onPopupPicker () {
-      if (this.readonly) {
-        return
-      }
-      this.popupVisible = true
     }
   },
   methods: {
@@ -101,6 +95,12 @@ export default {
         }
       }
       this.selectedIndex = index
+    },
+    onPopupPicker () {
+      if (this.readonly) {
+        return
+      }
+      this.popupVisible = true
     }
   },
   watch: {

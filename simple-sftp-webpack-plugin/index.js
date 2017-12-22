@@ -10,7 +10,10 @@ function SimpleSftpWebpackPlugin(options) {
 SimpleSftpWebpackPlugin.prototype.apply = function (compiler) {
   var self = this;
 
-  compiler.plugin('done', function () {
+  compiler.plugin('done', function (stats) {
+    if (stats.hasErrors()) {
+      return
+    }
     var privateKey = self.options.privateKey;
     if (!privateKey) {
       const homedir = os.homedir();
