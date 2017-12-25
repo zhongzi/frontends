@@ -6,8 +6,16 @@
   interlace: 是否支持渐进显示，取值范围：1 支持渐进显示，0不支持渐进显示(默认为0)，适用目标格式：jpg。
   q: 新图的图片质量,取值范围是[1, 100]，默认75
  */
-var res = require('res');
+
 var url = require('url');
+var dppx = 1;
+if (wx.getSystemInfoSync) {
+  var systemInfo = wx.getSystemInfoSync();
+  dppx = systemInfo.pixelRatio
+} else {
+  var res = require('res');
+  dppx = res.dppx() || 1
+}
 
 export default function (value, w, h, m, interlace, format, q) {
   if (!value) {
@@ -19,7 +27,6 @@ export default function (value, w, h, m, interlace, format, q) {
     return value;
   }
 
-  var dppx = res.dppx() || 1;
   var params = [];
   params.push('imageView2/' + (m || 0));
   w && params.push('/w/' + w * dppx);
