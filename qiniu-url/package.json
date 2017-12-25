@@ -1,0 +1,13 @@
+{
+  "name": "@jukejia/qiniu-url",
+  "version": "0.0.1",
+  "description": "qiniu url format",
+  "main": "index.js",
+  "repository": "https://github.com/YLTDco/jukejia-frontends/qiniu-url",
+  "author": "i@4leaf.me",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "res": "^0.4.0",
+    "url": "^0.11.0"
+  }
+}
