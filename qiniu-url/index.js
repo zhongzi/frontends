@@ -29,8 +29,8 @@ export default function (value, w, h, m, interlace, format, q) {
 
   var params = [];
   params.push('imageView2/' + (m || 0));
-  w && params.push('/w/' + w * dppx);
-  h && params.push('/h/' + h * dppx);
+  w && params.push('/w/' + Math.ceil(w * dppx));
+  h && params.push('/h/' + Math.ceil(h * dppx));
   format && params.push('/format/' + format);
   interlace && params.push('/interlace/' + interlace);
   q && params.push('/q/' + q);
