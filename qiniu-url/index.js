@@ -8,19 +8,21 @@
  */
 
 var url = require('url');
-var dppx = 1;
+var systemDppx = 1;
 if (typeof wx !== 'undefined' && wx.getSystemInfoSync) {
   var systemInfo = wx.getSystemInfoSync();
-  dppx = systemInfo.pixelRatio
+  systemDppx = systemInfo.pixelRatio
 } else {
   var res = require('res');
-  dppx = res.dppx() || 1
+  systemDppx = res.dppx() || 1
 }
 
-module.exports = function (value, w, h, m, interlace, format, q) {
+module.exports = function (value, w, h, m, interlace, format, q, dppx) {
   if (!value) {
     return;
   }
+
+  dppx = dppx || systemDppx
 
   var urlComponents = url.parse(value);
   if (urlComponents.protocol !== 'http:' && urlComponents.protocol !== 'https:') {

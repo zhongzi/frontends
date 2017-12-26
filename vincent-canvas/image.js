@@ -1,6 +1,6 @@
 module.exports = {
   compile: function(template, variable) {
-    return Object.assign(template, {
+    return Object.assign({}, template, {
       src: variable
     })
   },
@@ -27,7 +27,19 @@ module.exports = {
         } else {
           var img = new Image
           img.onload = function() {
-            ctx.drawImage(img, config.x, config.y, config.width, config.height)
+            var width = config.width
+            if (!width && config.height) {
+              width = config.height/img.height*img.width
+            }
+            var height = config.height
+            if (!height && config.width) {
+              height = config.width/img.width*img.height
+            }
+            if (width && height) {
+              ctx.drawImage(img, config.x, config.y, width, height)
+            } else {
+              ctx.drawImage(img, config.x, config.y)
+            }
             resolve()
           }
           img.onerror = function(e) {

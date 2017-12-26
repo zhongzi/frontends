@@ -1,6 +1,6 @@
 {
   "name": "@jukejia/qiniu-url",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "qiniu url format",
   "main": "index.js",
   "repository": "https://github.com/YLTDco/jukejia-frontends/qiniu-url",

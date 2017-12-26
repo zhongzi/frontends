@@ -15,19 +15,37 @@ if (!inMiniApp) {
 }
 
 module.exports = {
-  compile: function (template, variables) {
+  compile: function (template, variables, scale) {
     var compileds = []
     template.components.map(function (component) {
       var drawer = drawers[component.type]
       if (!drawer) {
         return
       }
+      var location = {}
+      if (scale > 1) {
+        location = {
+          x: component.x * scale,
+          y: component.y * scale
+        }
+        if (component.width) {
+          location.width = component.width * scale
+        }
+        if (component.height) {
+          location.height = component.height * scale
+        }
+        if (component.size) {
+          location.size = component.size * scale
+        }
+      }
+
       var compiled
       var variable = variables[component.name]
       if (drawer.compile && variable) {
         compiled = drawer.compile(component, variable)
+        compiled = Object.assign(compiled, location)
       } else {
-        compiled = component
+        compiled = Object.assign({}, component, location)
       }
       compileds.push(compiled)
     })
@@ -35,8 +53,9 @@ module.exports = {
       components: compileds
     }
   },
-  generate: function (ctx, template, variables, success, fail, wait) {
-    var config = this.compile(template, variables)
+  generate: function (ctx, template, variables, scale, success, fail, wait) {
+    scale = scale || 1
+    var config = this.compile(template, variables, scale)
     var currentPromise = null
     config.components.map(function (component) {
       var drawer = drawers[component.type]

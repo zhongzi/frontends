@@ -1,6 +1,6 @@
 module.exports = {
   compile: function (template, variable) {
-    return Object.assign(template, {
+    return Object.assign({}, template, {
       color: variable
     })
   },

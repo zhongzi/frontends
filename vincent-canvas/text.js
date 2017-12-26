@@ -1,6 +1,6 @@
 module.exports = {
   compile: function (template, variable) {
-    return Object.assign(template, {
+    return Object.assign({}, template, {
       text: variable
     })
   },
@@ -9,6 +9,9 @@ module.exports = {
       if (config.text) {
         if (config.size) {
           ctx.setFontSize(config.size)
+        }
+        if (config.weight && ctx.setFontWeight) {
+          ctx.setFontWeight(config.weight)
         }
         ctx.setFillStyle(config.color || '#00000')
         ctx.setTextBaseline(config.baseline || 'top')
