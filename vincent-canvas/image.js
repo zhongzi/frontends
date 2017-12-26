@@ -36,7 +36,21 @@ module.exports = {
               height = config.width/img.width*img.height
             }
             if (width && height) {
-              ctx.drawImage(img, config.x, config.y, width, height)
+              var canvasAspect = width/height
+              var imageAspect = img.width/img.height
+              var scale
+              if (canvasAspect < imageAspect) {
+                scale = height/img.height
+              } else {
+                scale = width/img.width
+              }
+              var imgWidth = width/scale
+              var imgHeight = height/scale
+              ctx.drawImage(img,
+                (img.width - imgWidth) * 0.5,
+                (img.height - imgHeight) * 0.5,
+                imgWidth, imgHeight,
+                config.x, config.y, width, height)
             } else {
               ctx.drawImage(img, config.x, config.y)
             }
