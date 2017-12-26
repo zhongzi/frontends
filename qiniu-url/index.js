@@ -17,7 +17,7 @@ if (typeof wx !== 'undefined' && wx.getSystemInfoSync) {
   systemDppx = res.dppx() || 1
 }
 
-module.exports = function (value, w, h, m, interlace, format, q, dppx) {
+module.exports = function (value, w, h, m, interlace, format, q, radius, dppx) {
   if (!value) {
     return;
   }
@@ -36,6 +36,7 @@ module.exports = function (value, w, h, m, interlace, format, q, dppx) {
   format && params.push('/format/' + format);
   interlace && params.push('/interlace/' + interlace);
   q && params.push('/q/' + q);
+  radius && params.push('|roundPic/radius/' + radius)
 
   var search = urlComponents.search;
   if (search && search.length > 1) {
