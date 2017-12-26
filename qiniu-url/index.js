@@ -9,7 +9,7 @@
 
 var url = require('url');
 var dppx = 1;
-if (wx.getSystemInfoSync) {
+if (typeof wx !== 'undefined' && wx.getSystemInfoSync) {
   var systemInfo = wx.getSystemInfoSync();
   dppx = systemInfo.pixelRatio
 } else {
@@ -17,7 +17,7 @@ if (wx.getSystemInfoSync) {
   dppx = res.dppx() || 1
 }
 
-export default function (value, w, h, m, interlace, format, q) {
+module.exports = function (value, w, h, m, interlace, format, q) {
   if (!value) {
     return;
   }

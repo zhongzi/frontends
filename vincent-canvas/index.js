@@ -1,6 +1,6 @@
-import image from './image'
-import rect from './rect'
-import text from './text'
+var image = require('./image')
+var rect = require('./rect')
+var text = require('./text')
 
 var drawers = {
   image: image,
@@ -8,7 +8,13 @@ var drawers = {
   text: text
 }
 
-export default {
+var inMiniApp = (typeof wx !== 'undefined')
+if (!inMiniApp) {
+  var patch = require('./patch')
+  patch()
+}
+
+module.exports = {
   compile: function (template, variables) {
     var compileds = []
     template.components.map(function (component) {
@@ -29,22 +35,26 @@ export default {
       components: compileds
     }
   },
-  generate: function (ctx, template, variables, success, fail) {
+  generate: function (ctx, template, variables, success, fail, wait) {
     var config = this.compile(template, variables)
-    var promises = []
+    var currentPromise = null
     config.components.map(function (component) {
       var drawer = drawers[component.type]
       if (!drawer) {
         return
       }
-      var promise = drawer.draw(ctx, component)
-      if (promise) {
-        promises.push(promise)
+      if (currentPromise) {
+        currentPromise = currentPromise.then(function () {
+          return drawer.draw(ctx, component)
+        })
+      } else {
+        currentPromise = drawer.draw(ctx, component)
       }
     })
-    Promise.all(promises).then(function () {
-      ctx.draw()
-      if (wx.canvasToTempFilePath) {
+
+    currentPromise.then(function () {
+      if (inMiniApp && wx.canvasToTempFilePath) {
+        ctx.draw()
         setTimeout(function () {
           wx.canvasToTempFilePath({
             canvasId: ctx.canvasId,
@@ -53,7 +63,7 @@ export default {
             },
             fail: fail
           })
-        }, 1000)
+        }, wait || 0)
       } else {
         success(ctx.canvas.toDataURL())
       }
