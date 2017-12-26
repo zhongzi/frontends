@@ -11,7 +11,8 @@ module.exports = {
         return
       }
       var inMiniApp = typeof wx !== 'undefined'
-      if (inMiniApp && wx.downloadFile && config.src.indexOf('http') === 0) {
+      var isRemote = (config.src.indexOf('http://') === 0 || config.src.indexOf('https://') === 0)
+      if (inMiniApp && wx.downloadFile && isRemote) {
         wx.downloadFile({
           url: config.src,
           success: function(res) {
@@ -59,7 +60,7 @@ module.exports = {
           img.onerror = function(e) {
             resolve(e)
           }
-          img.setAttribute('crossOrigin', 'anonymous');
+          img.setAttribute('crossOrigin', 'anonymous')
           img.src = config.src
         }
       }
