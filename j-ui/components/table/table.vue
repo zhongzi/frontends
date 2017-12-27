@@ -357,7 +357,9 @@ export default {
           reset = payload.reset
         }
         if (vm.noMoreData && reset !== true) {
-          vm.scroll.finishPullUp()
+          setTimeout(function () {
+            vm.scroll.finishPullUp()
+          })
           return
         }
         vm.isPullingUp = true
