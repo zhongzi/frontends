@@ -20,13 +20,13 @@ module.exports = {
         const x = config.x
         var y = config.y
         var lines = text.split('\n')
-        var limtedLine = []
-        lines.map(function (line) {
+        var limtedLines = []
+        lines.some(function (line) {
           if (config.limit && line.length > config.limit) {
             if (config.line) {
               for (var i = 0; i + 1 < config.line; i += 1) {
-                var limitedLine = line.substr(0, config.limit)
-                limtedLine.push(limitedLine)
+                var limtedLine = line.substr(0, config.limit)
+                limtedLines.push(limtedLine)
                 line = line.substr(config.limit)
                 if (line.length < config.limit) {
                   break
@@ -36,13 +36,14 @@ module.exports = {
             if (line.length > config.limit) {
               line = line.substr(0, config.limit - 1) + '...' 
             }
-            limtedLine.push(line)
+            limtedLines.push(line)
           } else {
-            limtedLine.push(line)
+            limtedLines.push(line)
           }
+          return config.length && limtedLines.length >= config.length
         })
         
-        limtedLine.map(function (line) {
+        limtedLines.map(function (line) {
           ctx.fillText(line, x, y)
           y += config.size + (config.space||0)
         })
