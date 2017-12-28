@@ -40,7 +40,7 @@ module.exports = {
           } else {
             limtedLines.push(line)
           }
-          return config.length && limtedLines.length >= config.length
+          return config.line && limtedLines.length >= config.line
         })
         
         limtedLines.map(function (line) {
