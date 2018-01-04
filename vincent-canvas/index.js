@@ -15,47 +15,50 @@ if (!inMiniApp) {
 }
 
 module.exports = {
-  compile: function (template, variables, scale) {
+  compile: function (template, variables, overrides, scale) {
     var compileds = []
     template.components.map(function (component) {
       var drawer = drawers[component.type]
       if (!drawer) {
         return
       }
-      var location = {}
-      if (scale > 1) {
-        location = {
-          x: component.x * scale,
-          y: component.y * scale
-        }
-        if (component.width) {
-          location.width = component.width * scale
-        }
-        if (component.height) {
-          location.height = component.height * scale
-        }
-        if (component.size) {
-          location.size = component.size * scale
-        }
-      }
 
       var compiled
       var variable = variables[component.name]
+      var override = overrides[component.name]
       if (drawer.compile && variable) {
         compiled = drawer.compile(component, variable)
-        compiled = Object.assign(compiled, location)
       } else {
-        compiled = Object.assign({}, component, location)
+        compiled = Object.assign({}, component)
       }
+
+      if (override) {
+        compiled = Object.assign(compiled, override)
+      }
+
+      if (scale > 1) {
+        compiled.x = compiled.x * scale
+        compiled.y = compiled.y * scale
+        if (compiled.width) {
+          compiled.width = compiled.width * scale
+        }
+        if (compiled.height) {
+          compiled.height = compiled.height * scale
+        }
+        if (compiled.size) {
+          compiled.size = compiled.size * scale
+        }
+      }
+      
       compileds.push(compiled)
     })
     return {
       components: compileds
     }
   },
-  generate: function (ctx, template, variables, scale, success, fail, wait) {
+  generate: function (ctx, template, variables, overrides, scale, success, fail, wait) {
     scale = scale || 1
-    var config = this.compile(template, variables, scale)
+    var config = this.compile(template, variables, overrides, scale)
     var currentPromise = null
     config.components.map(function (component) {
       var drawer = drawers[component.type]
