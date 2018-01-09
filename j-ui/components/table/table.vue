@@ -8,7 +8,7 @@
       <div :style="{ minHeight: minHeight }">
         <slot name="scrollHeader"></slot>
         <div v-show="!hasData && !isLoading">
-          <slot name="noMoreData"></slot>
+          <slot name="noData"></slot>
         </div>
         <slot></slot>
         <component :is="parentCell" :props="parentProps" v-on:table-click="tableClick">
@@ -59,16 +59,19 @@
   <div class="j-ui-table-footer" v-if="hasFooter">
     <slot name="footer"></slot>
   </div>
+  <j-loading :value="isLoading && !hasData"></j-loading>
 </div>
 </template>
 
 <script>
 import BScroll from 'better-scroll'
+import JLoading from '../loading'
 import JDoubleDounces from '../spinner/double-bounces'
 
 export default {
   components: {
-    JDoubleDounces
+    JDoubleDounces,
+    JLoading
   },
   props: {
     autoLoad: {
@@ -187,11 +190,13 @@ export default {
       return this.beforePullDownTip
     },
     pullDownStyle () {
-      if (this.isRebounding) {
-        return `top: ${10 - this.pullDownHeight + this.scrollPos}px`
-      }
-      if (this.isPullingDown) {
-        return 'top: 0'
+      if (this.silence) {
+        if (this.isRebounding) {
+          return `top: ${10 - this.pullDownHeight + this.scrollPos}px`
+        }
+        if (this.isPullingDown) {
+          return 'top: 0'
+        }
       }
       return `top: ${Math.min(this.scrollPos - this.pullDownHeight - 10, 0)}px`
     }
@@ -222,23 +227,28 @@ export default {
         }
       })
     },
-    jScrollReset () {
+    jScrollReset (silence = false) {
       let stop = 40
       this.scrollPos = stop
       if (!this.scroll) {
         this.needInitData = true
         return
       }
-      if (this.enablePullDown) {
-        this.scroll.pulling = true
-        this.scroll.trigger('pullingDown')
-        this.scroll.scrollTo(this.scroll.x, stop,
-          this.scroll.options.bounceTime)
+      if (silence) {
+        this.isLoading = true
+        this._load(true)
       } else {
-        this.scroll.trigger('pullingUp', {
-          reset: true
-        })
-        this.scroll.pullupWatching = false
+        if (this.enablePullDown) {
+          this.scroll.pulling = true
+          this.scroll.trigger('pullingDown')
+          this.scroll.scrollTo(this.scroll.x, stop,
+            this.scroll.options.bounceTime)
+        } else {
+          this.scroll.trigger('pullingUp', {
+            reset: true
+          })
+          this.scroll.pullupWatching = false
+        }
       }
     },
     _getKey (item, index) {
@@ -287,7 +297,7 @@ export default {
       }
 
       if (this.autoLoad || this.needInitData) {
-        this.jScrollReset()
+        this.jScrollReset(true)
       }
     },
     _load (reset) {
@@ -304,43 +314,44 @@ export default {
       this._loadFinished()
     },
     _loadFinished () {
-      let vm = this
+      this.isLoading = false
       if (this.isPullingDown) {
-        this.isLoading = false
-        this._reboundPullDown().then(function () {
-          vm._afterPullDown()
+        this._reboundPullDown().then(() => {
+          this._afterPullDown()
         })
       } else {
         if (this.isPullingUp) {
           this.isPullingUp = false
           this.scroll.finishPullUp()
         }
-        vm.refresh()
+        this.refresh()
       }
     },
     _initPullDown () {
-      let vm = this
-      this.scroll.on('pullingDown', function () {
-        vm.beforePullDown = false
-        vm.isPullingDown = true
-        vm.isLoading = true
-        vm._load(true)
+      this.scroll.on('pullingDown', () => {
+        this.beforePullDown = false
+        this.isPullingDown = true
+        this.isLoading = true
+        this._load(true)
       })
 
-      this.scroll.on('scroll', function (pos) {
-        vm.scrollPos = pos.y
+      this.scroll.on('scroll', (pos) => {
+        this.scrollPos = pos.y
       })
     },
     _reboundPullDown () {
-      const {stopTime = 600} = this.enablePullDown
+      let {stopTime = 600} = this.enablePullDown
       return new Promise((resolve) => {
         setTimeout(() => {
           this.isRebounding = true
-          this.scroll.finishPullDown()
-          this.isPullingDown = false
+          this._finishPullDown()
           resolve()
         }, stopTime)
       })
+    },
+    _finishPullDown () {
+      this.scroll.finishPullDown()
+      this.isPullingDown = false
     },
     _afterPullDown () {
       setTimeout(() => {
@@ -350,20 +361,19 @@ export default {
       }, this.scroll.options.bounceTime)
     },
     _initPullUp () {
-      let vm = this
-      this.scroll.on('pullingUp', function (payload) {
+      this.scroll.on('pullingUp', (payload) => {
         let reset = false
         if (payload) {
           reset = payload.reset
         }
-        if (vm.noMoreData && reset !== true) {
-          setTimeout(function () {
-            vm.scroll.finishPullUp()
+        if (this.noMoreData && reset !== true) {
+          setTimeout(() => {
+            this.scroll.finishPullUp()
           })
           return
         }
-        vm.isPullingUp = true
-        vm._load(reset)
+        this.isPullingUp = true
+        this._load(reset)
       })
     }
   }

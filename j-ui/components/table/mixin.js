@@ -19,10 +19,10 @@ export default {
     }
   },
   methods: {
-    resetNearestJTable () {
+    resetNearestJTable (silence = true) {
       let nearestJTable = this.nearestJTable
       if (nearestJTable) {
-        nearestJTable.jScrollReset()
+        nearestJTable.jScrollReset(silence)
       }
     }
   }
