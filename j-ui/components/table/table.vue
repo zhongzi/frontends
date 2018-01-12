@@ -11,8 +11,8 @@
           <slot name="noData"></slot>
         </div>
         <slot></slot>
-        <component :is="parentCell" :props="parentProps" v-on:table-click="tableClick">
-          <component
+        <component :is="parentCell" :props="parentProps" v-on:table-click="tableClick" class="j-ui-table-parent">
+          <component class="j-ui-table-cell"
             v-for="(item, index) in list"
             :key="_getKey(item, index)"
             :is="_getCell(item)"
