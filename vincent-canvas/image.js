@@ -1,5 +1,7 @@
+var utils = require('./utils')
+
 module.exports = {
-  compile: function(template, variable) {
+  compile: function(ctx, template, variable) {
     return Object.assign({}, template, {
       src: variable
     })
@@ -10,9 +12,8 @@ module.exports = {
         resolve()
         return
       }
-      var inMiniApp = typeof wx !== 'undefined'
       var isRemote = (config.src.indexOf('http://') === 0 || config.src.indexOf('https://') === 0)
-      if (inMiniApp && wx.downloadFile && isRemote) {
+      if (utils.inMiniApp && wx.downloadFile && isRemote) {
         wx.downloadFile({
           url: config.src,
           success: function(res) {
@@ -22,7 +23,7 @@ module.exports = {
           fail: reject
         })
       } else {
-        if (inMiniApp) {
+        if (utils.inMiniApp) {
           ctx.drawImage(config.src, config.x, config.y, config.width, config.height)
           resolve()
         } else {

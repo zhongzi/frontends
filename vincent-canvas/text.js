@@ -1,11 +1,29 @@
+var utils = require('./utils')
+
 module.exports = {
-  compile: function (template, variable) {
-    return Object.assign({}, template, {
+  compile: function (ctx, template, variable, scale) {
+    var compiled = Object.assign({}, template, {
       text: variable
     })
+    // 计算宽度 / 高度
+    if (!utils.inMiniApp) {
+      if (template.size) {
+        ctx.setFontSize(template.size * scale)
+      }
+      if (template.weight && ctx.setFontWeight) {
+        ctx.setFontWeight(template.weight)
+      }
+      var size = ctx.measureText(compiled.text)
+      compiled.measureWidth = size.width
+      compiled.height = compiled.size
+    }
+    return compiled
   },
   draw: function(ctx, config) {
     return new Promise(function (resolve) {
+      var x = config.x
+      var y = config.y
+      var limtedLines = []
       if (config.text) {
         if (config.size) {
           ctx.setFontSize(config.size)
@@ -16,11 +34,8 @@ module.exports = {
         ctx.setFillStyle(config.color || '#00000')
         ctx.setTextBaseline(config.baseline || 'top')
         ctx.setTextAlign(config.align || 'left')
-        var text = config.text
-        const x = config.x
-        var y = config.y
+        var text = config.text + ''
         var lines = text.split('\n')
-        var limtedLines = []
         lines.some(function (line) {
           if (config.limit && line.length > config.limit) {
             if (config.line) {
@@ -44,7 +59,20 @@ module.exports = {
         })
         
         limtedLines.map(function (line) {
+          var needRestore = false
+          if (config.shadow && !utils.inMiniApp) {
+            ctx.save()
+            var shadow = config.shadow
+            ctx.shadowColor=shadow.color
+            ctx.shadowOffsetX = shadow.offsetX || 0
+            ctx.shadowOffsetY = shadow.offsetY || 0
+            ctx.shadowBlur=shadow.blur
+            needRestore = true
+          }
           ctx.fillText(line, x, y)
+          if (needRestore) {
+            ctx.restore()
+          }
           y += config.size + (config.space||0)
         })
       }

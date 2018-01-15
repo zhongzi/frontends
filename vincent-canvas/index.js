@@ -1,6 +1,12 @@
 var image = require('./image')
 var rect = require('./rect')
 var text = require('./text')
+var utils = require('./utils')
+
+if (!utils.inMiniApp) {
+  var patch = require('./patch')
+  patch()
+}
 
 var drawers = {
   image: image,
@@ -8,16 +14,10 @@ var drawers = {
   text: text
 }
 
-var inMiniApp = (typeof wx !== 'undefined')
-if (!inMiniApp) {
-  var patch = require('./patch')
-  patch()
-}
-
 module.exports = {
-  compile: function (template, variables, overrides, scale) {
+  compile: function (ctx, template, variables, overrides, scale) {
     var compileds = []
-    template.components.map(function (component) {
+    template.components.forEach(function (component, index) {
       var drawer = drawers[component.type]
       if (!drawer) {
         return
@@ -27,7 +27,7 @@ module.exports = {
       var variable = variables[component.name]
       var override = overrides[component.name]
       if (drawer.compile && variable) {
-        compiled = drawer.compile(component, variable)
+        compiled = drawer.compile(ctx, component, variable, scale)
       } else {
         compiled = Object.assign({}, component)
       }
@@ -36,20 +36,36 @@ module.exports = {
         compiled = Object.assign(compiled, override)
       }
 
-      if (scale > 1) {
-        compiled.x = compiled.x * scale
-        compiled.y = compiled.y * scale
-        if (compiled.width) {
-          compiled.width = compiled.width * scale
-        }
-        if (compiled.height) {
-          compiled.height = compiled.height * scale
-        }
-        if (compiled.size) {
-          compiled.size = compiled.size * scale
-        }
+      var x = 0
+      var y = 0
+      if (index > 0) {
+        var previsouCompiled = compileds[index - 1]
+        x = previsouCompiled.x + previsouCompiled.width
+        y = previsouCompiled.y + previsouCompiled.height
       }
-      
+      if (compiled.x != undefined) {
+        compiled.x = compiled.x * scale
+      } else if (compiled.offsetX != undefined) {
+        compiled.x = x + compiled.offsetX * scale
+      }
+      if (compiled.y != undefined) {
+        compiled.y = compiled.y * scale
+      } else if (compiled.offsetY != undefined) {
+        compiled.y = y + compiled.offsetY * scale
+      }
+      if (compiled.width != undefined) {
+        compiled.width = compiled.width * scale
+      } else if (compiled.measureWidth != undefined) {
+        compiled.width = compiled.measureWidth
+      }
+      if (compiled.height != undefined) {
+        compiled.height = compiled.height * scale
+      } else if (compiled.measureHeight != undefined) {
+        compiled.height = compiled.measureHeight
+      }
+      if (compiled.size != undefined) {
+        compiled.size = compiled.size * scale
+      }
       compileds.push(compiled)
     })
     return {
@@ -58,9 +74,9 @@ module.exports = {
   },
   generate: function (ctx, template, variables, overrides, scale, success, fail, wait) {
     scale = scale || 1
-    var config = this.compile(template, variables, overrides, scale)
+    var config = this.compile(ctx, template, variables, overrides, scale)
     var currentPromise = null
-    config.components.map(function (component) {
+    config.components.forEach(function (component) {
       var drawer = drawers[component.type]
       if (!drawer) {
         return
@@ -75,7 +91,7 @@ module.exports = {
     })
 
     currentPromise.then(function () {
-      if (inMiniApp && wx.canvasToTempFilePath) {
+      if (utils.inMiniApp && wx.canvasToTempFilePath) {
         ctx.draw()
         setTimeout(function () {
           wx.canvasToTempFilePath({
