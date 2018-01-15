@@ -26,7 +26,7 @@ module.exports = {
       var compiled
       var variable = variables[component.name]
       var override = overrides[component.name]
-      if (drawer.compile && variable) {
+      if (drawer.compile && variable != undefined) {
         compiled = drawer.compile(ctx, component, variable, scale)
       } else {
         compiled = Object.assign({}, component)
