@@ -16,6 +16,7 @@
             v-for="(item, index) in list"
             :key="_getKey(item, index)"
             :is="_getCell(item)"
+            :index="index"
             :value="item"
             :props="cellProps"
             :selected="selectedIndex === index"
