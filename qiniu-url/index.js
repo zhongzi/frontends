@@ -17,7 +17,7 @@ if (typeof wx !== 'undefined' && wx.getSystemInfoSync) {
   systemDppx = res.dppx() || 1
 }
 
-module.exports = function (value, w, h, m, interlace, format, q, radius, dppx) {
+module.exports = function (value, w, h, m, interlace, format, q, radius, dppx, search_merge_symbol) {
   if (!value) {
     return;
   }
@@ -36,11 +36,15 @@ module.exports = function (value, w, h, m, interlace, format, q, radius, dppx) {
   format && params.push('/format/' + format);
   interlace && params.push('/interlace/' + interlace);
   q && params.push('/q/' + q);
-  radius && params.push('|roundPic/radius/' + radius)
+  radius && params.push('%7croundPic/radius/' + radius)
 
   var search = urlComponents.search;
   if (search && search.length > 1) {
-    urlComponents.search += '&';
+    if (search_merge_symbol && search_merge_symbol.length > 0) {
+      urlComponents.search += search_merge_symbol
+    } else {
+      urlComponents.search += '&'
+    }
   } else {
     urlComponents.search = '?';
   }
