@@ -44,7 +44,7 @@ SimpleSftpWebpackPlugin.prototype.apply = function (compiler) {
     var dest = self.options.path;
     client.mkdir(dest, { mode: 0755 }, function (err) {
       client.scp(
-        src, { path: dest }, function (err) {
+        src, { path: dest }, client, function (err) {
           if (err) {
             throw err
           }
