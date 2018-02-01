@@ -72,7 +72,10 @@ module.exports = {
       components: compileds
     }
   },
-  generate: function (ctx, template, variables, overrides, scale, success, fail, wait) {
+  generate: function (ctx, template, variables, overrides, scale, success, fail, options) {
+    if (!options) {
+      options = {}
+    }
     scale = scale || 1
     var config = this.compile(ctx, template, variables, overrides, scale)
     var currentPromise = null
@@ -100,8 +103,8 @@ module.exports = {
               success(res.tempFilePath)
             },
             fail: fail
-          })
-        }, wait || 0)
+          }, options.this)
+        }, options.wait || 0)
       } else {
         success(ctx.canvas.toDataURL())
       }
