@@ -288,3 +288,6 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+### 自定义 ###
+dist/
