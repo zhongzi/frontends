@@ -1,9 +1,9 @@
 {
-  "name": "@jukejia/swift-resource",
-  "version": "0.1.1",
+  "name": "@jukejia/egret-utils",
+  "version": "0.1.0",
   "description": "quick generate restful api and vuex store' ",
   "main": "dist/index.js",
-  "repository": "https://github.com/YLTDco/jukejia-frontends/swift-resource",
+  "repository": "https://github.com/YLTDco/jukejia-frontends/egret-utils",
   "author": "i@4leaf.me",
   "license": "UNLICENSED",
   "scripts": {
@@ -30,8 +30,10 @@
     "transform-runtime": "^0.0.0"
   },
   "dependencies": {
-    "vue": "^2.5.13",
-    "vuex": "^3.0.1"
+    "date-fns": "^1.29.0",
+    "hrn": "^1.0.0",
+    "url": "^0.11.0",
+    "weixin-js-sdk": "^1.2.0"
   },
   "browserslist": [
     "> 1%",
