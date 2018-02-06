@@ -3,7 +3,7 @@ import parse from 'date-fns/parse'
 
 export default function (value, formatStr) {
   if (value) {
-    if (typeof date.getMonth !== 'function') {
+    if (typeof value.getMonth !== 'function') {
       value = parse(value)
     }
     return format(value, formatStr)
