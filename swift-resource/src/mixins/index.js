@@ -1,5 +1,5 @@
-import error from './error'
-import loading from './loading'
+import ErrorMixin from './error'
+import LoadingMixin from './loading'
 
 export {
   ErrorMixin,
