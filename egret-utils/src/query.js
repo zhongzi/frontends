@@ -1,4 +1,4 @@
-export function from (query) {
+function from (query) {
   let rawQueries = []
   for (let key in query) {
     let value = query[key]
@@ -10,7 +10,7 @@ export function from (query) {
   return rawQueries.join('&')
 }
 
-export function parse (query) {
+function parse (query) {
   const res = {}
   query = query.trim().replace(/^(\?|#|&)/, '')
   if (!query) {
@@ -32,4 +32,9 @@ export function parse (query) {
     }
   })
   return res
+}
+
+export default {
+  from,
+  parse
 }
