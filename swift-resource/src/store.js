@@ -208,7 +208,6 @@ export default function (api, default_ = {}) {
       var start = 0
       if (reset === true) {
         start = 0
-        commit('resetList', { key: key })
       } else {
         if (getters.getListLoadingByTag(key) === true) {
           return
@@ -226,6 +225,9 @@ export default function (api, default_ = {}) {
           headers: headers,
           args: args
         })
+        if (reset === true) {
+          commit('resetList', { key: key })
+        }
         commit('listSuccess', {
           key: key,
           response: response
