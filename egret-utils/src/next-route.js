@@ -29,4 +29,4 @@ function get ({next, params, query}) {
   return next
 }
 
-export { build, get }
+export default { build, get }
