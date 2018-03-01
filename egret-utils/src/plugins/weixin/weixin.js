@@ -21,6 +21,9 @@ export default {
     if (!this.isInWeixin()) {
       return
     }
+    if (!this.signer) {
+      throw new Error('没有配置微信签名接口')
+    }
     weixin.ready(() => {
       callback()
     })
@@ -33,19 +36,20 @@ export default {
     } else {
       url = window.location.href.split('#')[0]
     }
-    if (!this.signer) {
-      throw new Error('没有配置微信签名接口')
-    }
     this.signer(url).then((response) => {
       let config = response.data
       config.debug = process.env.NODE_ENV !== 'production'
-      config.jsApiList = ['onMenuShareTimeline',
+      let jsApiList = ['onMenuShareTimeline',
         'onMenuShareAppMessage',
         'onMenuShareQQ',
         'onMenuShareWeibo',
         'onMenuShareQZone',
         'showMenuItems',
-        'hideMenuItems'] + permissions
+        'hideMenuItems']
+      if (permissions) {
+        jsApiList = jsApiList.concat(permissions)
+      }
+      config.jsApiList = jsApiList
       weixin.config(config)
     })
   },
