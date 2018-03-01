@@ -102,9 +102,9 @@ export default function (api, default_ = {}) {
     listStart (state, { key }) {
       Vue.set(state.loading.lists, key, true)
     },
-    listSuccess (state, { key, response }) {
+    listSuccess (state, { key, response, reset = false}) {
       Vue.set(state.loading.lists, key, false)
-      if (!(key in state.lists)) {
+      if (!(key in state.lists) || reset === true) {
         Vue.set(state.lists, key, response.data.data)
       } else {
         state.lists[key] = state.lists[key].concat(response.data.data)
@@ -205,13 +205,13 @@ export default function (api, default_ = {}) {
   const actions = {
     async list ({ state, getters, dispatch, commit }, { query, headers, configs, args, reset, success, failure, tag }) {
       var key = normalizeKey(tag)
+      if (getters.getListLoadingByTag(key) === true) {
+        return
+      }
       var start = 0
       if (reset === true) {
         start = 0
       } else {
-        if (getters.getListLoadingByTag(key) === true) {
-          return
-        }
         start = getters.getListByTag(key).length
       }
       commit('listStart', { key: key })
@@ -225,12 +225,10 @@ export default function (api, default_ = {}) {
           headers: headers,
           args: args
         })
-        if (reset === true) {
-          commit('resetList', { key: key })
-        }
         commit('listSuccess', {
           key: key,
-          response: response
+          response: response,
+          reset: reset
         })
         if (success) {
           success(response)
