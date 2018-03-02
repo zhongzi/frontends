@@ -17,7 +17,8 @@ export default {
     return /micromessenger/.test(window.navigator.userAgent.toLowerCase())
   },
   config (callback, withHash = false,
-    permissions=['openLocation', 'previewImage', 'chooseWXPay']) {
+    permissions = ['openLocation', 'previewImage', 'chooseWXPay'],
+    debug = false) {
     if (!this.isInWeixin()) {
       return
     }
@@ -38,7 +39,7 @@ export default {
     }
     this.signer(url).then((response) => {
       let config = response.data
-      config.debug = process.env.NODE_ENV !== 'production'
+      config.debug = debug
       let jsApiList = ['onMenuShareTimeline',
         'onMenuShareAppMessage',
         'onMenuShareQQ',
