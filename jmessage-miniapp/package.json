@@ -1,0 +1,9 @@
+{
+  "name": "@jukejia/jmessage-miniapp",
+  "version": "1.4.0",
+  "description": "jmessage for miniapp",
+  "main": "index.js",
+  "repository": "https://github.com/YLTDco/jukejia-frontends/jmessage-miniapp",
+  "author": "i@4leaf.me",
+  "license": "UNLICENSED"
+}
