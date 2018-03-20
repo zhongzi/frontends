@@ -1,6 +1,6 @@
 {
   "name": "@jukejia/swift-resource",
-  "version": "0.2.1",
+  "version": "0.2.3",
   "description": "quick generate restful api and vuex store' ",
   "main": "dist/index.js",
   "repository": "https://github.com/YLTDco/jukejia-frontends/swift-resource",

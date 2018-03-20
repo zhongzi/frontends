@@ -23,8 +23,7 @@ export default function (api, plural) {
       })
     },
     get ({id, query, headers, args, configs}) {
-      return api.get(getPlural(id, args), {
-        params: query,
+      return api.get(url, query, {
         headers: headers,
         configs: configs
       })
