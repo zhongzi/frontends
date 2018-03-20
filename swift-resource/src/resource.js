@@ -17,38 +17,36 @@ export default function (api, plural) {
   }
   return {
     list ({query, headers, args, configs}) {
-      return api.get(getPlural(undefined, args), {
-        params: query,
+      return api.get(getPlural(undefined, args), query, {
         headers: headers,
         configs: configs
       })
     },
     get ({id, query, headers, args, configs}) {
       return api.get(getPlural(id, args), {
-        params: query,
+        query: query,
         headers: headers,
         configs: configs
       })
     },
     create ({res, query, headers, args, configs}) {
       return api.post(getPlural(undefined, args), res, {
-        params: query,
+        query: query,
         headers: headers,
         configs: configs
       })
     },
     update ({res, query, headers, args, configs}) {
       return api.put(getPlural(res.id, args), res, {
-        params: query,
+        query: query,
         headers: headers,
         configs: configs
       })
     },
     delete ({res, query, headers, args, configs}) {
-      return api.delete(getPlural(res.id, args), {
-        params: query,
+      return api.delete(getPlural(res.id, args), res, {
+        query: query,
         headers: headers,
-        data: res,
         configs: configs
       })
     }

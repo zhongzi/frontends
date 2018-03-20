@@ -64,6 +64,7 @@ export default {
     width: 100%;
     border: 0;
     outline: 0;
+    border-radius: 0;
     -webkit-appearance: none;
     background-color: transparent;
     font-size: inherit;

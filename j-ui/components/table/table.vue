@@ -60,7 +60,7 @@
   <div class="j-ui-table-footer" v-if="hasFooter">
     <slot name="footer"></slot>
   </div>
-  <j-loading :value="isLoading && !hasData"></j-loading>
+  <j-loading :value="isLoading && resetting"></j-loading>
 </div>
 </template>
 
@@ -168,7 +168,8 @@ export default {
       isLoading: false,
       selectedIndex: null,
       needInitData: false,
-      minHeight: undefined
+      minHeight: undefined,
+      resetting: false
     }
   },
   computed: {
@@ -302,6 +303,7 @@ export default {
       }
     },
     _load (reset) {
+      this.resetting = true
       this.load(reset, this.limit, this._loadSuccess, this._loadFinished)
     },
     _loadSuccess (response) {
@@ -315,6 +317,7 @@ export default {
       this._loadFinished()
     },
     _loadFinished () {
+      this.resetting = false
       this.isLoading = false
       if (this.isPullingDown) {
         this._reboundPullDown().then(() => {
