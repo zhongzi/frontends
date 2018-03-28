@@ -102,7 +102,7 @@ export default function (api, default_ = {}) {
     listStart (state, { key }) {
       Vue.set(state.loading.lists, key, true)
     },
-    listSuccess (state, { key, response, reset = false}) {
+    listSuccess (state, { key, response, reset }) {
       Vue.set(state.loading.lists, key, false)
       if (!(key in state.lists) || reset === true) {
         Vue.set(state.lists, key, response.data.data)
