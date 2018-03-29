@@ -232,6 +232,8 @@ export default function (api, default_ = {}) {
         })
         if (success) {
           success(response)
+        } else {
+          return response
         }
       } catch (err) {
         commit('listFail', {
@@ -240,6 +242,8 @@ export default function (api, default_ = {}) {
         })
         if (failure) {
           failure(err)
+        } else {
+          throw err
         }
       }
     },
@@ -280,11 +284,15 @@ export default function (api, default_ = {}) {
         commit('getSuccess', { key: key, response: response })
         if (success) {
           success(response)
+        } else {
+          return response
         }
       } catch (err) {
         commit('getFail', { key: key, error: err })
         if (failure) {
           failure(err)
+        } else {
+          throw err
         }
       }
     },
@@ -320,11 +328,15 @@ export default function (api, default_ = {}) {
         }
         if (success) {
           success(response)
+        } else {
+          return response
         }
       } catch (err) {
         commit('saveFail', { key: key, error: err })
         if (failure) {
           failure(err)
+        } else {
+          throw err
         }
       }
     },
@@ -345,11 +357,15 @@ export default function (api, default_ = {}) {
         commit('deleteSuccess', { key: key, response: response })
         if (success) {
           success(response)
+        } else {
+          return response
         }
       } catch (err) {
         commit('deleteFail', { key: key, error: err })
         if (failure) {
           failure(err)
+        } else {
+          throw err
         }
       }
     }
