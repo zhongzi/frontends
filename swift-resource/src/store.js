@@ -243,7 +243,7 @@ export default function (api, default_ = {}) {
         if (failure) {
           failure(err)
         } else {
-          throw err
+          return Promise.reject(err)
         }
       }
     },
@@ -292,7 +292,7 @@ export default function (api, default_ = {}) {
         if (failure) {
           failure(err)
         } else {
-          throw err
+          return Promise.reject(err)
         }
       }
     },
@@ -336,7 +336,7 @@ export default function (api, default_ = {}) {
         if (failure) {
           failure(err)
         } else {
-          throw err
+          return Promise.reject(err)
         }
       }
     },
@@ -365,7 +365,7 @@ export default function (api, default_ = {}) {
         if (failure) {
           failure(err)
         } else {
-          throw err
+          return Promise.reject(err)
         }
       }
     }
