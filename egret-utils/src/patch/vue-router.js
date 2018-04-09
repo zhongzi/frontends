@@ -1,4 +1,4 @@
-import { nextRoute } from '../next-route'
+import nextRoute from '../next-route'
 
 export default function (Router) {
   Router.prototype.buildNext = function (from) {

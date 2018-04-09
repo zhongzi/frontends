@@ -1,6 +1,6 @@
 {
   "name": "@jukejia/egret-utils",
-  "version": "0.1.6",
+  "version": "0.1.12",
   "description": "quick generate restful api and vuex store' ",
   "main": "dist/index.js",
   "repository": "https://github.com/YLTDco/jukejia-frontends/egret-utils",

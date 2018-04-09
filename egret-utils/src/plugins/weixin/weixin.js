@@ -16,40 +16,40 @@ export default {
     }
     return /micromessenger/.test(window.navigator.userAgent.toLowerCase())
   },
-  config (callback, withHash = false,
-    permissions = ['openLocation', 'previewImage', 'chooseWXPay'],
-    debug = false) {
+  config (callback, withHash = false, debug = false) {
     if (!this.isInWeixin()) {
       return
     }
     if (!this.signer) {
       throw new Error('没有配置微信签名接口')
     }
-    weixin.ready(() => {
-      callback()
-    })
-    weixin.error((res) => {
-      console.log('[Weixin]error ' + JSON.stringify(res))
-    })
+    weixin.ready(callback)
+    weixin.error(callback)
     let url
     if (withHash) {
       url = window.location.href
     } else {
       url = window.location.href.split('#')[0]
     }
-    this.signer(url).then((response) => {
+    let args = []
+    if (arguments.length > 3) {
+      args = [...arguments].splice(3)
+    }
+    this.signer(url, args).then((response) => {
       let config = response.data
       config.debug = debug
-      let jsApiList = ['onMenuShareTimeline',
+      let jsApiList = [
+        'onMenuShareTimeline',
         'onMenuShareAppMessage',
         'onMenuShareQQ',
         'onMenuShareWeibo',
         'onMenuShareQZone',
         'showMenuItems',
-        'hideMenuItems']
-      if (permissions) {
-        jsApiList = jsApiList.concat(permissions)
-      }
+        'hideMenuItems',
+        'openLocation',
+        'getLocation',
+        'previewImage',
+        'chooseWXPay']
       config.jsApiList = jsApiList
       weixin.config(config)
     })
