@@ -1,6 +1,7 @@
 function build (current) {
   return JSON.stringify({
     name: current.name,
+    path: current.path,
     params: current.params,
     query: current.query
   })

@@ -66,12 +66,12 @@ export default {
   },
   configShare (config) {
     // 分享
+    this.enableShare()
     weixin.onMenuShareTimeline(config)
     weixin.onMenuShareAppMessage(config)
     weixin.onMenuShareQQ(config)
     weixin.onMenuShareWeibo(config)
     weixin.onMenuShareQZone(config)
-    this.enableShare()
   },
   clearShare () {
     this.configShare({})
