@@ -223,6 +223,7 @@ export default function (api, default_ = {}) {
         const response = await api.list({
           query: query,
           headers: headers,
+          configs: configs,
           args: args
         })
         commit('listSuccess', {
@@ -279,6 +280,7 @@ export default function (api, default_ = {}) {
           id: id,
           query: query,
           headers: headers,
+          configs: configs,
           args: args
         })
         commit('getSuccess', { key: key, response: response })
@@ -309,6 +311,7 @@ export default function (api, default_ = {}) {
           res: res,
           query: query,
           headers: headers,
+          configs: configs,
           args: args
         }
         if (res.id) {
@@ -352,6 +355,7 @@ export default function (api, default_ = {}) {
           res: res,
           query: query,
           headers: headers,
+          configs: configs,
           args: args
         })
         commit('deleteSuccess', { key: key, response: response })

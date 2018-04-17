@@ -1,6 +1,6 @@
 {
   "name": "@jukejia/swift-resource",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "quick generate restful api and vuex store' ",
   "main": "dist/index.js",
   "repository": "https://github.com/YLTDco/jukejia-frontends/swift-resource",
@@ -16,6 +16,7 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-eslint": "^8.2.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-stage-2": "^6.24.1",
     "eslint": "^4.15.0",
