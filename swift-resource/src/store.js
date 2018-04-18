@@ -124,10 +124,11 @@ export default function (api, default_ = {}) {
     push (state, { tag, res }) {
       var key = normalizeKey(tag)
       var list = state.lists[key]
-      if (!list) {
-        return
+      if (list) {
+        list.push(res)
+      } else {
+        Vue.set(state.lists, key, [res])
       }
-      list.push(res)
     },
     splice(state, { tag, index }) {
       var key = normalizeKey(tag)
