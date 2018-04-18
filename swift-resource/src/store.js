@@ -121,6 +121,30 @@ export default function (api, default_ = {}) {
       Vue.set(state.loading.lists, key, false)
       Vue.set(state.error.lists, key, error)
     },
+    push (state, { tag, res }) {
+      var key = normalizeKey(tag)
+      var list = state.lists[key]
+      list.push(res)
+    },
+    splice(state, { tag, index }) {
+      var key = normalizeKey(tag)
+      var list = state.lists[key]
+      if (index < 0) {
+        index = list.length + index
+      }
+      list.splice(index, 1)
+    },
+    remove (state, { tag, res, equal }) {
+      var key = normalizeKey(tag)
+      var list = state.lists[key]
+      for (var i = 0; i < list.length; i++) {
+        var resource = list[i]
+        if (equal && equal(resource, res) || resource.id === res.id) {
+          list.splice(i, 1)
+          break
+        }
+      }
+    },
     updateInList (state, { tag, id, changes }) {
       var key = normalizeKey(tag)
       var list = state.lists[key]
