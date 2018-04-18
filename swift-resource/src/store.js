@@ -124,11 +124,17 @@ export default function (api, default_ = {}) {
     push (state, { tag, res }) {
       var key = normalizeKey(tag)
       var list = state.lists[key]
+      if (!list) {
+        return
+      }
       list.push(res)
     },
     splice(state, { tag, index }) {
       var key = normalizeKey(tag)
       var list = state.lists[key]
+      if (!list) {
+        return
+      }
       if (index < 0) {
         index = list.length + index
       }
@@ -137,6 +143,9 @@ export default function (api, default_ = {}) {
     remove (state, { tag, res, equal }) {
       var key = normalizeKey(tag)
       var list = state.lists[key]
+      if (!list) {
+        return
+      }
       for (var i = 0; i < list.length; i++) {
         var resource = list[i]
         if (equal && equal(resource, res) || resource.id === res.id) {
@@ -148,6 +157,9 @@ export default function (api, default_ = {}) {
     updateInList (state, { tag, id, changes }) {
       var key = normalizeKey(tag)
       var list = state.lists[key]
+      if (!list) {
+        return
+      }
       for (var i = 0; i < list.length; i++) {
         var resource = list[i]
         if (resource.id === id) {
