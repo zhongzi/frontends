@@ -24,7 +24,9 @@ export default {
     textKey: String,
     data: {
       type: Array,
-      default: []
+      default () {
+        return []
+      }
     },
     height: {
       type: String,

@@ -101,16 +101,10 @@ export default {
       type: [String, Object],
       default: 'div'
     },
-    parentProps: {
-      type: Object,
-      default: null
-    },
+    parentProps: Object,
     cell: Object,
     dynamicCell: Function,
-    cellProps: {
-      type: Object,
-      default: null
-    },
+    cellProps: Object,
     enablePullUp: {
       type: Boolean,
       default: true

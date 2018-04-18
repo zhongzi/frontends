@@ -43,10 +43,7 @@ export default {
     },
     cell: Object,
     dynamicCell: Function,
-    cellProps: {
-      type: Object,
-      default: null
-    },
+    cellProps: Object,
     threshold: {
       type: Number,
       default: 0
