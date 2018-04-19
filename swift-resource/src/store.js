@@ -159,7 +159,7 @@ export default function (api, default_ = {}) {
         }
       }
     },
-    updateInList (state, { tag, id, changes }) {
+    updateInList (state, { tag, id, changes, callback }) {
       var key = normalizeKey(tag)
       var list = state.lists[key]
       if (!list) {
@@ -169,6 +169,7 @@ export default function (api, default_ = {}) {
         var resource = list[i]
         if (resource.id === id) {
           updateResource(resource, changes, false)
+          callback && callback(resource)
           break
         }
       }
