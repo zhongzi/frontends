@@ -121,16 +121,20 @@ export default function (api, default_ = {}) {
       Vue.set(state.loading.lists, key, false)
       Vue.set(state.error.lists, key, error)
     },
-    push (state, { tag, res }) {
+    setInList (state, { tag, index, res }) {
       var key = normalizeKey(tag)
       var list = state.lists[key]
       if (list) {
-        list.push(res)
+        if (index) {
+          list.splice(index, 0, res)
+        } else {
+          list.push(res)
+        }
       } else {
         Vue.set(state.lists, key, [res])
       }
     },
-    splice(state, { tag, index }) {
+    deleteInList (state, { tag, index }) {
       var key = normalizeKey(tag)
       var list = state.lists[key]
       if (!list) {
@@ -141,7 +145,7 @@ export default function (api, default_ = {}) {
       }
       list.splice(index, 1)
     },
-    remove (state, { tag, res, equal }) {
+    removeInList (state, { tag, res, equal }) {
       var key = normalizeKey(tag)
       var list = state.lists[key]
       if (!list) {
