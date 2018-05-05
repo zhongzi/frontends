@@ -2,7 +2,7 @@ var res = require('res')
 
 var densities = [1, 2, 3]
 
-function bestDensity () {
+function getBestDensity () {
   var systemDppx = res.dppx() || 1
   var currentDistance = 1000
   var bestDensity = 1
@@ -18,20 +18,12 @@ function bestDensity () {
 
 module.exports = {
   install (Vue, options = {}) {
-    Object.defineProperty(Vue.prototype, '$density', {
-      get () {
-        return bestDensity()
-      }
-    })
-
-    Object.defineProperty(Vue.prototype, '$densityStr', {
-      get () {
-        var density = bestDensity()
-        if (density === 3) {
-          return ''
-        }
-        return '@' + density + 'x'
-      }
-    })
+    var bestDensity = bestDensity()
+    Vue.prototype.$density = bestDensity
+    var densityStr = ''
+    if (density !== 3) {
+      densityStr = '@' + bestDensity + 'x'
+    }
+    Vue.prototype.$densityStr = densityStr
   }
 }
