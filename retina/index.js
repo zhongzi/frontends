@@ -18,10 +18,10 @@ function getBestDensity () {
 
 module.exports = {
   install (Vue, options = {}) {
-    var bestDensity = bestDensity()
+    var bestDensity = getBestDensity()
     Vue.prototype.$density = bestDensity
     var densityStr = ''
-    if (density !== 3) {
+    if (bestDensity !== 3) {
       densityStr = '@' + bestDensity + 'x'
     }
     Vue.prototype.$densityStr = densityStr
