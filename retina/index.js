@@ -1,29 +1,30 @@
-var res = require('res')
+var res = require('res');
 
-var densities = [1, 2, 3]
+var densities = [1, 2, 3];
 
 function getBestDensity () {
-  var systemDppx = res.dppx() || 1
-  var currentDistance = 1000
-  var bestDensity = 1
-  densities.forEach(function (density) {
-    var distance = Math.abs(density - systemDppx)
+  var systemDppx = res.dppx() || 1;
+  var currentDistance = 1000;
+  var bestDensity = 1;
+  for (var i = 0; i < densities.length; i++) {
+    var density = densities[i];
+    var distance = Math.abs(density - systemDppx);
     if (distance < currentDistance) {
-      bestDensity = density
-      currentDistance = distance
+      bestDensity = density;
+      currentDistance = distance;
     }
-  })
-  return bestDensity
+  }
+  return bestDensity;
 }
 
 module.exports = {
-  install (Vue, options = {}) {
-    var bestDensity = getBestDensity()
-    Vue.prototype.$density = bestDensity
-    var densityStr = ''
+  install: function (Vue) {
+    var bestDensity = getBestDensity();
+    Vue.prototype.$density = bestDensity;
+    var densityStr = '';
     if (bestDensity !== 3) {
-      densityStr = '@' + bestDensity + 'x'
+      densityStr = '@' + bestDensity + 'x';
     }
-    Vue.prototype.$densityStr = densityStr
+    Vue.prototype.$densityStr = densityStr;
   }
 }
