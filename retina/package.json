@@ -1,13 +1,13 @@
 {
   "name": "@jukejia/retina",
-  "version": "0.2.1",
+  "version": "0.2.3",
   "description": "retina tools",
   "main": "index.js",
   "repository": "https://github.com/YLTDco/jukejia-frontends/retina",
   "author": "i@4leaf.me",
   "license": "UNLICENSED",
   "dependencies": {
-    "glob": "^7.1.2",
+    "klaw": "^2.1.1",
     "gm": "^1.23.1",
     "res": "^0.4.0"
   }
