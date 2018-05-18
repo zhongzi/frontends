@@ -9,7 +9,7 @@ module.exports = function (callback, baseDensity=3, densities = [1, 2], dir='src
     if (item.stats.isDirectory()) {
       return
     }
-    file = item.path
+    const file = item.path
     if (file.indexOf('@') >= 0) {
       return
     }
