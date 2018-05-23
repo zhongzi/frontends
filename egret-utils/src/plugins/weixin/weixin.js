@@ -6,6 +6,19 @@ let shareMenus = ['menuItem:share:appMessage',
   'menuItem:share:weiboApp',
   'menuItem:share:facebook',
   'menuItem:share:QZone']
+const defaultJsApiList = [
+  'onMenuShareTimeline',
+  'onMenuShareAppMessage',
+  'onMenuShareQQ',
+  'onMenuShareWeibo',
+  'onMenuShareQZone',
+  'showMenuItems',
+  'hideMenuItems',
+  'openLocation',
+  'getLocation',
+  'previewImage',
+  'chooseWXPay',
+  'scanQRCode']
 
 export default {
   jsapi: weixin,
@@ -16,7 +29,7 @@ export default {
     }
     return /micromessenger/.test(window.navigator.userAgent.toLowerCase())
   },
-  config (callback, withHash = false, debug = false) {
+  config (callback, withHash = false, debug = false, jsApiList=defaultJsApiList) {
     if (!this.isInWeixin()) {
       return
     }
@@ -38,18 +51,6 @@ export default {
     this.signer(url, args).then((response) => {
       let config = response.data
       config.debug = debug
-      let jsApiList = [
-        'onMenuShareTimeline',
-        'onMenuShareAppMessage',
-        'onMenuShareQQ',
-        'onMenuShareWeibo',
-        'onMenuShareQZone',
-        'showMenuItems',
-        'hideMenuItems',
-        'openLocation',
-        'getLocation',
-        'previewImage',
-        'chooseWXPay']
       config.jsApiList = jsApiList
       weixin.config(config)
     })
