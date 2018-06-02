@@ -1,0 +1,11 @@
+{
+  "name": "@jukejia/qiniu-clean",
+  "version": "0.1.0",
+  "main": "index.js",
+  "repository": "https://github.com/YLTDco/jukejia-frontends/qiniu-clean",
+  "author": "i@4leaf.me",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "qiniu": "^7.1.7"
+  }
+}
