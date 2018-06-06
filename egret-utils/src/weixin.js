@@ -1,3 +1,5 @@
+import queryBuilder from './query'
+
 let weixin = require('weixin-js-sdk')
 
 let shareMenus = ['menuItem:share:appMessage',
@@ -29,7 +31,58 @@ export default {
     }
     return /micromessenger/.test(window.navigator.userAgent.toLowerCase())
   },
-  config (callback, withHash = false, debug = false, jsApiList=defaultJsApiList) {
+  login (next, to, {
+    relativePath,
+    redirectUri,
+    wechatAppid,
+    state = ''}, scope = 'snsapi_base') {
+    // 构建登录后的跳转页面地址
+    let query = to.query || {}
+    delete query['code']
+    query = queryBuilder.from(query || {})
+    let nextPath = relativePath + '#' + to.path
+    if (query && query.length > 0) {
+      nextPath += '?' + query
+    }
+
+    // 微信回调不支持 hash 模式, 将回调跳转到后端, 由后端完成跳转
+    redirectUri = redirectUri + 'next=' + encodeURIComponent(nextPath)
+
+    // 使用微信登录
+    next(false)
+    window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize' +
+      '?appid=' + wechatAppid +
+      '&redirect_uri=' + encodeURIComponent(redirectUri) +
+      '&response_type=code' +
+      '&scope=' + scope +
+      '&state=' + state +
+      '#wechat_redirect'
+  },
+  loginGuard (next, to, validator, callback, configs) {
+    let code = to.query.code
+    if (code && code.length > 0) {
+      validator(code).then((res) => {
+        const scope = callback(res)
+        if (scope) {
+          this.login(next, to, configs, 'snsapi_userinfo')
+        } else {
+          let query = to.query || {}
+          delete query['code']
+          next({
+            name: to.name,
+            query: query,
+            params: to.params
+          })
+        }
+      }).catch((err) => {
+        console.log(err)
+        next(false)
+      })
+    } else {
+      this.login(next, to, configs)
+    }
+  },
+  config (callback, withHash = false, debug = false, jsApiList = defaultJsApiList) {
     if (!this.isInWeixin()) {
       return
     }

@@ -53,6 +53,11 @@ export default {
     }
   },
   methods: {
+    update () {
+      this.wheels.forEach((wheel, i) => {
+        this.currentValue[i] = wheel.getSelectedIndex()
+      })
+    },
     refresh (timeout) {
       if (this.wheels && this.wheels.length > 0) {
         setTimeout(() => {

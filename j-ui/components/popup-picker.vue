@@ -66,6 +66,10 @@ export default {
   },
   methods: {
     onConfirm () {
+      let picker = this.$refs.picker
+      if (picker) {
+        picker.update()
+      }
       this.$emit('input', this.currentValue)
       this.currentShow = false
     }

@@ -1,4 +1,4 @@
-import weixin from './weixin'
+import weixin from '../weixin'
 
 export default {
   install (Vue) {
