@@ -125,7 +125,7 @@ export default function (api, default_ = {}) {
       var key = normalizeKey(tag)
       var list = state.lists[key]
       if (list) {
-        if (index) {
+        if (index !== undefined && index !== null) {
           list.splice(index, 0, res)
         } else {
           list.push(res)
@@ -153,7 +153,7 @@ export default function (api, default_ = {}) {
       }
       for (var i = 0; i < list.length; i++) {
         var resource = list[i]
-        if (equal && equal(resource, res) || resource.id === res.id) {
+        if ((equal && equal(resource, res)) || resource.id === res.id) {
           list.splice(i, 1)
           break
         }
@@ -252,7 +252,7 @@ export default function (api, default_ = {}) {
       }
       var start = 0
       if (reset === true) {
-        start = 0
+        start = configs.offset || 0
       } else {
         start = getters.getListByTag(key).length
       }
@@ -341,12 +341,21 @@ export default function (api, default_ = {}) {
       }
     },
     async save ({ commit, getters, dispatch }, { res, syncTag, query, headers, configs, args, success, failure }) {
-      var key = normalizeKey(res.id)
-      // 正在保存
-      if (getters.getSaveLoadingById(key) === true) {
-        return
+      let batchedRes = res
+      if (Object.prototype.toString.call(batchedRes) !== '[object Array]') {
+        batchedRes = [res]
       }
-      commit('saveStart', { key: key })
+
+      const hasId = batchedRes[0].id
+      batchedRes.forEach(function (res) {
+        const key = normalizeKey(res.id)
+        // 正在保存
+        if (getters.getSaveLoadingById(key) === true) {
+          return
+        }
+        commit('saveStart', { key: key })
+      })
+
       try {
         var promise
         var params = {
@@ -356,28 +365,52 @@ export default function (api, default_ = {}) {
           configs: configs,
           args: args
         }
-        if (res.id) {
+        if (hasId) {
           promise = api.update(params)
         } else {
           promise = api.create(params)
         }
         const response = await promise
-        const data = response.data
-        commit('saveSuccess', { key: key, response: response })
-        if (syncTag !== undefined) {
-          commit('updateInList', {
-            tag: syncTag,
-            id: data.id,
-            changes: res
-          })
+        let responseData = response.data
+        if (Object.prototype.toString.call(responseData) !== '[object Array]') {
+          responseData = [responseData]
         }
+
+        batchedRes.forEach(function (res, index) {
+          const key = normalizeKey(res.id)
+          const data = responseData[index]
+          commit('saveSuccess', {
+            key: key,
+            response: { data: data } })
+
+          if (syncTag !== undefined) {
+            if (res.id) {
+              commit('updateInList', {
+                tag: syncTag,
+                id: data.id,
+                changes: res
+              })
+            } else {
+              commit('setInList', {
+                tag: syncTag,
+                index: 0,
+                res: Object.assign({}, res, data)
+              })
+            }
+          }
+        })
+
         if (success) {
           success(response)
         } else {
           return response
         }
       } catch (err) {
-        commit('saveFail', { key: key, error: err })
+        batchedRes.forEach(function (res) {
+          const key = normalizeKey(res.id)
+          commit('saveFail', { key: key, error: err })
+        })
+
         if (failure) {
           failure(err)
         } else {
@@ -385,7 +418,7 @@ export default function (api, default_ = {}) {
         }
       }
     },
-    async delete ({ commit, getters, dispatch }, { res, query, headers, configs, args, success, failure }) {
+    async delete ({ commit, getters, dispatch }, { res, syncTag, query, headers, configs, args, success, failure }) {
       var key = normalizeKey(res.id)
       // 正在保存
       if (getters.getDeleteLoadingById(key) === true) {
@@ -401,6 +434,14 @@ export default function (api, default_ = {}) {
           args: args
         })
         commit('deleteSuccess', { key: key, response: response })
+
+        if (syncTag !== undefined) {
+          commit('removeInList', {
+            tag: syncTag,
+            res: res
+          })
+        }
+
         if (success) {
           success(response)
         } else {

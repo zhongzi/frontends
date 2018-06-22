@@ -1,4 +1,4 @@
-var url = require('url')
+const url = require('url')
 
 function safeBase64Encode (str) {
   str = btoa(str)
@@ -7,24 +7,36 @@ function safeBase64Encode (str) {
   return str + Array((4 - str.length % 4) % 4 + 1).join('=')
 }
 
-export default function (value, imageUrl, options) {
-  var urlComponents = url.parse(value)
+export default function (value, imageOrText, options) {
+  const urlComponents = url.parse(value)
   if (urlComponents.protocol !== 'http:' && urlComponents.protocol !== 'https:') {
     return value
   }
 
-  let param = 'watermark/1/image/' + safeBase64Encode(imageUrl) +
-    '/dissolve/' + (options.dissolve || 100) +
-    '/gravity/' + (options.gravity || 'SouthEast') +
-    '/dx/' + (options.dx || 0) +
-    '/dy/' + (options.dy || 0)
-  if (options.wx) {
-    param += '/wx/' + options.wx
+  let param = ''
+  if (value.indexOf('watermark/3') === -1) {
+    param = 'watermark/3'
+  }
+  param += '/' + (options.type || 'image') + '/' + (options.escaped ? imageOrText : safeBase64Encode(imageOrText)) + '/dissolve/' + (options.dissolve || 100) + '/gravity/' + (options.gravity || 'SouthEast') + '/dx/' + (options.dx || 0) + '/dy/' + (options.dy || 0)
+  if (options.ws) {
+    param += '/ws/' + options.ws
+  }
+  if (options.wst) {
+    param += '/wst/' + options.wst
+  }
+  if (options.fill) {
+    param += '/fill/' + safeBase64Encode(options.fill)
+  }
+  if (options.font) {
+    param += '/font/' + safeBase64Encode(options.font)
+  }
+  if (options.fill) {
+    param += '/fontsize/' + options.fontsize
   }
 
-  var search = urlComponents.search
+  const search = urlComponents.search
   if (search && search.length > 1) {
-    if (options.search_merge_symbol && options.search_merge_symbol.length > 0) {
+    if (options.search_merge_symbol !== undefined) {
       urlComponents.search += options.search_merge_symbol
     } else {
       urlComponents.search += '&'
