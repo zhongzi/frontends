@@ -69,8 +69,8 @@ export default function (api, plural, filters = []) {
       })
       return processResFilters(promise)
     },
-    update ({res, query, headers, args, configs = {}}) {
-      return api.put(getPlural(res.id, args), res, {
+    update ({res, id, query, headers, args, configs = {}}) {
+      return api.put(getPlural(id || res.id, args), res, {
         params: query,
         headers: headers,
         configs: configs

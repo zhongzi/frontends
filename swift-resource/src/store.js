@@ -340,13 +340,13 @@ export default function (api, default_ = {}) {
         }
       }
     },
-    async save ({ commit, getters, dispatch }, { res, syncTag, query, headers, configs, args, success, failure }) {
+    async save ({ commit, getters, dispatch }, { res, id, syncTag, query, headers, configs, args, success, failure }) {
       let batchedRes = res
       if (Object.prototype.toString.call(batchedRes) !== '[object Array]') {
         batchedRes = [res]
       }
 
-      const hasId = batchedRes[0].id
+      const resId = id || batchedRes[0].id
       batchedRes.forEach(function (res) {
         const key = normalizeKey(res.id)
         // 正在保存
@@ -359,13 +359,14 @@ export default function (api, default_ = {}) {
       try {
         var promise
         var params = {
+          id: resId,
           res: res,
           query: query,
           headers: headers,
           configs: configs,
           args: args
         }
-        if (hasId) {
+        if (resId) {
           promise = api.update(params)
         } else {
           promise = api.create(params)
