@@ -252,7 +252,7 @@ export default function (api, default_ = {}) {
       }
       var start = 0
       if (reset === true) {
-        start = configs.offset || 0
+        start = (configs && configs.offset) || 0
       } else {
         start = getters.getListByTag(key).length
       }
