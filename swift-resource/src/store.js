@@ -1,5 +1,5 @@
 import Vue from 'vue'
-
+import merge from 'lodash/merge'
 import updateResource from './utils/update_resource'
 
 var normalizeKey = function (key) {
@@ -222,7 +222,7 @@ export default function (api, default_ = {}) {
     },
     saveSuccess (state, { key, response }) {
       Vue.set(state.loading.saveds, key, false)
-      const resource = Object.assign(state.resources[key] || {}, response.data)
+      const resource = merge(state.resources[key] || {}, response.data)
       Vue.set(state.resources, key, resource)
       Vue.set(state.error.saveds, key, null)
     },
@@ -395,7 +395,7 @@ export default function (api, default_ = {}) {
               commit('setInList', {
                 tag: syncTag,
                 index: 0,
-                res: Object.assign({}, res, data)
+                res: merge({}, res, data)
               })
             }
           }
