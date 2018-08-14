@@ -1,11 +1,7 @@
 <template>
-<div class="j-ui-table" :style="{ height: height }">
-  <div class="j-ui-table-header" v-if="hasHeader">
-    <slot name="header"></slot>
-  </div>
-  <div class="j-ui-table-wrapper" ref="wrapper">
+  <div class="j-ui-table" ref="wrapper" :style="{ height: height }">
     <div class="j-ui-table-content">
-      <div :style="{ minHeight: minHeight }">
+      <div :style="{ minHeight: height }">
         <slot name="scrollHeader"></slot>
         <div v-show="!hasData && !isLoading">
           <slot name="noData"></slot>
@@ -56,18 +52,14 @@
         </div>
       </div>
     </slot>
+    <j-loading :value="isLoading && resetting"></j-loading>
   </div>
-  <div class="j-ui-table-footer" v-if="hasFooter">
-    <slot name="footer"></slot>
-  </div>
-  <j-loading :value="isLoading && resetting"></j-loading>
-</div>
 </template>
 
 <script>
 import BScroll from 'better-scroll'
-import JLoading from '../loading'
-import JDoubleDounces from '../spinner/double-bounces'
+import JLoading from './loading'
+import JDoubleDounces from './spinner/double-bounces'
 
 export default {
   components: {
@@ -119,7 +111,7 @@ export default {
     },
     pullDownThreshold: {
       type: Number,
-      default: 90
+      default: 50
     },
     beforePullDownTip: {
       type: String,
@@ -162,17 +154,10 @@ export default {
       isLoading: false,
       selectedIndex: null,
       needInitData: false,
-      minHeight: undefined,
       resetting: false
     }
   },
   computed: {
-    hasHeader () {
-      return !!this.$slots['header']
-    },
-    hasFooter () {
-      return !!this.$slots['footer']
-    },
     hasData () {
       return this.list && this.list.length > 0
     },
@@ -186,15 +171,13 @@ export default {
       return this.beforePullDownTip
     },
     pullDownStyle () {
-      if (this.silence) {
-        if (this.isRebounding) {
-          return `top: ${10 - this.pullDownHeight + this.scrollPos}px`
-        }
-        if (this.isPullingDown) {
-          return 'top: 0'
-        }
+      if (this.beforePullDown) {
+        return `top: ${Math.min(this.scrollPos - this.pullDownHeight - 10, this.pullDownHeight*0.5)}px`
       }
-      return `top: ${Math.min(this.scrollPos - this.pullDownHeight - 10, 0)}px`
+      if (this.isRebounding) {
+        return `top: ${this.scrollPos - this.pullDownHeight + 10}px`
+      }
+      return 'top: 10px'
     }
   },
   mounted () {
@@ -214,9 +197,6 @@ export default {
       this.$emit('on-select', item, this._getCell(item))
     },
     refresh (reset = false) {
-      if (reset) {
-        this._resetMinHeight()
-      }
       this.$nextTick(() => {
         if (this.scroll) {
           this.scroll.refresh()
@@ -259,18 +239,7 @@ export default {
       }
       return this.cell
     },
-    _resetMinHeight () {
-      let minHeight = 0
-      if (this.$refs && this.$refs.wrapper) {
-        minHeight = this.$refs.wrapper.offsetHeight
-      }
-      if (minHeight > 0) {
-        this.minHeight = (minHeight + 'px')
-      }
-    },
     _initScroll () {
-      this._resetMinHeight()
-
       let options = {
         scrollX: false,
         scrollY: true,
@@ -381,60 +350,47 @@ export default {
 <style lang="less">
 .j-ui-table {
   position: relative;
-  display: flex;
-  flex-flow: column;
   width: 100%;
+  overflow: hidden;
 
-  .j-ui-table-header, .j-ui-table-footer {
-    flex: 0 1 auto;
-  }
-
-  .j-ui-table-wrapper {
-    position: relative;
-    flex: 1 1 auto;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-
-    .j-ui-table-content {
-      .j-ui-table-pullup {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 16px 0;
-        font-size: 14px;
-        color: gray;
-      }
-    }
-
-    .j-ui-table-pulldown {
-      position: absolute;
+  .j-ui-table-content {
+    .j-ui-table-pullup {
       width: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
-      transition: all;
+      padding: 16px 0;
       font-size: 14px;
       color: gray;
-      .j-ui-table-after-trigger {
-        margin-top: 10px;
-      }
     }
+  }
 
-    .j-ui-table-loading {
-      > div {
-        display: inline-block;
-        width: 20px;
-        height: 20px;
-        vertical-align: middle;
-      }
-      > label {
-        display: inline-block;
-        height: 20px;
-        line-height: 20px;
-        vertical-align: middle;
-      }
+  .j-ui-table-pulldown {
+    position: absolute;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all;
+    font-size: 14px;
+    color: gray;
+    .j-ui-table-after-trigger {
+      margin-top: 10px;
+    }
+  }
+
+  .j-ui-table-loading {
+    > div {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      vertical-align: middle;
+    }
+    > label {
+      display: inline-block;
+      height: 20px;
+      line-height: 20px;
+      vertical-align: middle;
     }
   }
 }
