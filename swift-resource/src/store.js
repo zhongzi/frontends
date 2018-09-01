@@ -245,7 +245,7 @@ export default function (api, default_ = {}) {
   }
 
   const actions = {
-    async list ({ state, getters, dispatch, commit }, { query, headers, configs, args, reset, success, failure, tag }) {
+    async list ({ state, getters, dispatch, commit }, { query, headers, configs, args, reset, success, failure, tag, lazy }) {
       var key = normalizeKey(tag)
       if (getters.getListLoadingByTag(key) === true) {
         return
@@ -253,6 +253,26 @@ export default function (api, default_ = {}) {
       var start = 0
       if (reset === true) {
         start = (configs && configs.offset) || 0
+        if (lazy) {
+          const data = getters.getListByTag(key)
+          if (data.length > 0) {
+            const total = getters.getListTotalByTag(key)
+            const sums = getters.getListSumsByTag(key)
+            const response = {
+              data: {
+                data: data,
+                total: total,
+                sums: sums
+              }
+            }
+            if (success) {
+              success(response)
+              return
+            } else {
+              return response
+            }
+          }
+        }
       } else {
         start = getters.getListByTag(key).length
       }
@@ -290,10 +310,25 @@ export default function (api, default_ = {}) {
         }
       }
     },
-    async get ({ state, getters, commit, dispatch }, { id, restore, requireColumns, query, headers, configs, args, success, failure }) {
+    async get ({ state, getters, commit, dispatch }, { id, restore, requireColumns, query, headers, configs, args, success, failure, lazy }) {
       const key = normalizeKey(id)
       if (getters.getLoadingById(key) === true) {
         return
+      }
+
+      if (lazy) {
+        const resource = state.resources[key]
+        if (resource) {
+          const response = {
+            data: resource
+          }
+          if (success) {
+            success(response)
+            return
+          } else {
+            return response
+          }
+        }
       }
 
       // 恢復
