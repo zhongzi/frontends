@@ -7,8 +7,8 @@ module.exports = {
     browser: true,
   },
   extends: [
-    'plugin:vue/recommended',
-    'standard'],
+    'standard',
+    'eslint:recommended'],
   plugins: [
     'html',
     'promise',
