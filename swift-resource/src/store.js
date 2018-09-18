@@ -2,7 +2,7 @@ import Vue from 'vue'
 import merge from 'lodash/merge'
 import updateResource from './utils/update_resource'
 
-var normalizeKey = function (key) {
+const normalizeKey = function (key) {
   if (!key) {
     return ''
   }
@@ -122,8 +122,8 @@ export default function (api, default_ = {}) {
       Vue.set(state.error.lists, key, error)
     },
     setInList (state, { tag, index, res }) {
-      var key = normalizeKey(tag)
-      var list = state.lists[key]
+      const key = normalizeKey(tag)
+      let list = state.lists[key]
       if (list) {
         if (index !== undefined && index !== null) {
           list.splice(index, 0, res)
@@ -135,8 +135,8 @@ export default function (api, default_ = {}) {
       }
     },
     deleteInList (state, { tag, index }) {
-      var key = normalizeKey(tag)
-      var list = state.lists[key]
+      const key = normalizeKey(tag)
+      let list = state.lists[key]
       if (!list) {
         return
       }
@@ -146,13 +146,13 @@ export default function (api, default_ = {}) {
       list.splice(index, 1)
     },
     removeInList (state, { tag, res, equal }) {
-      var key = normalizeKey(tag)
-      var list = state.lists[key]
+      const key = normalizeKey(tag)
+      let list = state.lists[key]
       if (!list) {
         return
       }
-      for (var i = 0; i < list.length; i++) {
-        var resource = list[i]
+      for (let i = 0; i < list.length; i++) {
+        const resource = list[i]
         if ((equal && equal(resource, res)) || resource.id === res.id) {
           list.splice(i, 1)
           break
@@ -160,13 +160,13 @@ export default function (api, default_ = {}) {
       }
     },
     updateInList (state, { tag, id, changes, callback }) {
-      var key = normalizeKey(tag)
-      var list = state.lists[key]
+      const key = normalizeKey(tag)
+      let list = state.lists[key]
       if (!list) {
         return
       }
-      for (var i = 0; i < list.length; i++) {
-        var resource = list[i]
+      for (let i = 0; i < list.length; i++) {
+        const resource = list[i]
         if (resource.id === id) {
           updateResource(resource, changes, false)
           callback && callback(resource)
@@ -177,10 +177,10 @@ export default function (api, default_ = {}) {
     restore (state, { key }) {
       if (!(key in state.resources)) {
         // 從列表恢復
-        for (var k in state.lists) {
-          var lists = state.lists[k]
-          for (var i = 0; i < lists.length; i++) {
-            var resource = lists[i]
+        for (const k in state.lists) {
+          const lists = state.lists[k]
+          for (let i = 0; i < lists.length; i++) {
+            const resource = lists[i]
             if (normalizeKey(resource.id) === key) {
               Vue.set(state.resources, key, resource)
               break
@@ -209,8 +209,8 @@ export default function (api, default_ = {}) {
       Vue.set(state.resources, key, res)
     },
     update (state, { id, changes }) {
-      let key = normalizeKey(id)
-      var resource = state.resources[key]
+      const key = normalizeKey(id)
+      let resource = state.resources[key]
       if (!resource) {
         resource = {}
         Vue.set(state.resources, key, resource)
@@ -246,11 +246,8 @@ export default function (api, default_ = {}) {
 
   const actions = {
     async list ({ state, getters, dispatch, commit }, { query, headers, configs, args, reset, success, failure, tag, lazy }) {
-      var key = normalizeKey(tag)
-      if (getters.getListLoadingByTag(key) === true) {
-        return
-      }
-      var start = 0
+      const key = normalizeKey(tag)
+      let start = 0
       if (reset === true) {
         start = (configs && configs.offset) || 0
         if (lazy) {
@@ -312,10 +309,6 @@ export default function (api, default_ = {}) {
     },
     async get ({ state, getters, commit, dispatch }, { id, restore, requireColumns, query, headers, configs, args, success, failure, lazy }) {
       const key = normalizeKey(id)
-      if (getters.getLoadingById(key) === true) {
-        return
-      }
-
       if (lazy) {
         const resource = state.resources[key]
         if (resource) {
@@ -336,10 +329,10 @@ export default function (api, default_ = {}) {
         commit('restore', { key: key })
         // 是否有必要的列
         if (state.resources[key]) {
-          var hasRequireColumns = true
+          let hasRequireColumns = true
           if (requireColumns) {
-            for (var i = 0; i < requireColumns.length; i++) {
-              var requireColumn = requireColumns[i]
+            for (let i = 0; i < requireColumns.length; i++) {
+              const requireColumn = requireColumns[i]
               if (!(requireColumn in state.resources[key])) {
                 hasRequireColumns = false
               }
@@ -392,8 +385,8 @@ export default function (api, default_ = {}) {
       })
 
       try {
-        var promise
-        var params = {
+        let promise
+        const params = {
           id: resId,
           res: res,
           query: query,
@@ -455,7 +448,7 @@ export default function (api, default_ = {}) {
       }
     },
     async delete ({ commit, getters, dispatch }, { res, syncTag, query, headers, configs, args, success, failure }) {
-      var key = normalizeKey(res.id)
+      const key = normalizeKey(res.id)
       // 正在保存
       if (getters.getDeleteLoadingById(key) === true) {
         return

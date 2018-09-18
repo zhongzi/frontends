@@ -1,6 +1,3 @@
-/*
-数字格式化
- */
 let hrn = require('hrn')
 
 export default function (value, fixed, formatter) {
