@@ -25,6 +25,7 @@ module.exports = {
     if (bestDensity !== 3) {
       densityStr = '@' + bestDensity + 'x';
     }
+    Vue.densityStr = densityStr
     Vue.prototype.$densityStr = densityStr;
   }
 }
