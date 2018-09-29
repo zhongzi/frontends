@@ -413,19 +413,21 @@ export default function (api, default_ = {}) {
             response: { data: data } })
 
           if (syncTag !== undefined) {
-            if (res.id) {
-              commit('updateInList', {
-                tag: syncTag,
-                id: data.id,
-                changes: res
-              })
-            } else {
-              commit('setInList', {
-                tag: syncTag,
-                index: 0,
-                res: merge({}, res, data)
-              })
-            }
+            setTimeout(function () {
+              if (res.id) {
+                commit('updateInList', {
+                  tag: syncTag,
+                  id: data.id,
+                  changes: res
+                })
+              } else {
+                commit('setInList', {
+                  tag: syncTag,
+                  index: 0,
+                  res: merge({}, res, data)
+                })
+              }
+            })
           }
         })
 
@@ -465,9 +467,11 @@ export default function (api, default_ = {}) {
         commit('deleteSuccess', { key: key, response: response })
 
         if (syncTag !== undefined) {
-          commit('removeInList', {
-            tag: syncTag,
-            res: res
+          setTimeout(function () {
+            commit('removeInList', {
+              tag: syncTag,
+              res: res
+            })
           })
         }
 
