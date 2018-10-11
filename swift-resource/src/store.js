@@ -418,13 +418,13 @@ export default function (api, default_ = {}) {
                 commit('updateInList', {
                   tag: syncTag,
                   id: data.id,
-                  changes: res
+                  changes: merge(res, data)
                 })
               } else {
                 commit('setInList', {
                   tag: syncTag,
                   index: 0,
-                  res: merge({}, res, data)
+                  res: merge(res, data)
                 })
               }
             })
