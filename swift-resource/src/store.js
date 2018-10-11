@@ -414,17 +414,18 @@ export default function (api, default_ = {}) {
 
           if (syncTag !== undefined) {
             setTimeout(function () {
+              const merged = merge({}, res, data)
               if (res.id) {
                 commit('updateInList', {
                   tag: syncTag,
                   id: data.id,
-                  changes: merge(res, data)
+                  changes: merged
                 })
               } else {
                 commit('setInList', {
                   tag: syncTag,
                   index: 0,
-                  res: merge(res, data)
+                  res: merged
                 })
               }
             })
