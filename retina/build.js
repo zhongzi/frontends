@@ -3,7 +3,7 @@ const fs = require('fs')
 const klaw = require('klaw')
 const gm = require('gm')
 
-module.exports = function (dir='src/asset/', baseDensity=3, densities = [1, 2], callback) {
+module.exports = function (dir, baseDensity=3, densities = [1, 2], callback) {
   var promises = []
   klaw(dir).on('data', function (item) {
     if (item.stats.isDirectory()) {

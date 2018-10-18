@@ -31,7 +31,7 @@ export default function (Router) {
     this.replace(route, onComplete, onAbort)
   }
 
-  Router.prototype.pushRawNext = function ({next, params, query, replace = false}) {
+  Router.prototype.pushRawNext = function ({next, params, query, replace = false}, onComplete, onAbort) {
     next = nextRoute.get({
       next: next,
       params: params,
@@ -44,13 +44,13 @@ export default function (Router) {
       }
     }
     if (replace === true) {
-      this.replace(next)
+      this.replace(next, onComplete, onAbort)
     } else {
-      this.push(next)
+      this.push(next, onComplete, onAbort)
     }
   }
 
-  Router.prototype.pushNext = function (current, replace = false) {
+  Router.prototype.pushNext = function (current, replace = false, onComplete, onAbort) {
     let next = current.query.next
     if (!next) {
       return false
@@ -59,7 +59,7 @@ export default function (Router) {
       next: next,
       replace: replace,
       query: current.query
-    })
+    }, onComplete, onAbort)
     return true
   }
 }
