@@ -369,12 +369,12 @@ export default function (api, default_ = {}) {
       }
     },
     async save ({ commit, getters, dispatch }, { res, id, syncTag, query, headers, configs, args, success, failure }) {
+      let resId = 'updating'
       let batchedRes = res
       if (Object.prototype.toString.call(batchedRes) !== '[object Array]') {
         batchedRes = [res]
+        resId = res.id
       }
-
-      const resId = id || batchedRes[0].id
       batchedRes.forEach(function (res) {
         const key = normalizeKey(res.id)
         // 正在保存
