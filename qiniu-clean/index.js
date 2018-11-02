@@ -1,102 +1,103 @@
 const qiniu = require('qiniu')
+const pathUtil = require('path')
 
 const min = 3
 
 class QiniuCleaner {
   constructor ({
-    key,
-    secret,
+    ACCESS_KEY,
+    SECRET_KEY,
     bucket,
-    prefix
+    path,
+    days
   }) {
+    if (!ACCESS_KEY || !SECRET_KEY) {
+      throw new Error('ACCESS_KEY and SECRET_KEY must be provided');
+    }
     if (!bucket) {
-      throw new Error('请传入 bucket')
+      throw new Error('bucket must be provided')
     }
-    if (!prefix || prefix.length < min) {
-      throw new Error(`前缀至少需要${min}`)
-    }
-    const last = prefix[prefix.length - 1]
-    if (last !== '/') {
-      prefix += '/'
+    if (!path || path.length < min) {
+      throw new Error('path must be provided')
     }
 
     const mac = new qiniu.auth.digest.Mac(
-      key, secret)
+      ACCESS_KEY, SECRET_KEY)
     const config = new qiniu.conf.Config
     this.bucketManager = new qiniu.rs.BucketManager(mac, config)
     this.bucket = bucket
-    this.prefix = prefix
+    this.path = path
+    this.days = parseInt(days, 10)
   }
 
-  cleanIfNot (name, days=7, marker=undefined) {
-    if (!name || name.length < min) {
-      throw new Error(`前缀至少需要${min}`)
-    }
+  apply (compiler) {
+    compiler.plugin('after-emit', (compilation, callback) => {
+      const path = this.path.replace('[hash]', compilation.hash)
+      const assets = compilation.assets
+      const fileNames = Object.keys(assets).filter((fileName) => {
+        return assets[fileName].emitted
+      }).reduce((current, fileName) => {
+        current[pathUtil.join(path, fileName)] = true
+        return current
+      }, {})
+      this.cleanIfNot(fileNames, path, undefined, callback)
+    })
+  }
 
+  cleanIfNot (fileNames, path, marker, callback) {
     this.bucketManager.listPrefix(this.bucket, {
-      prefix: this.prefix,
+      prefix: path,
       marker: marker,
       limit: 1000
     }, (err, respBody, respInfo) => {
       if (err) {
-        throw err
+        callback(err)
+        return
       }
       if (respInfo.statusCode === 200) {
         const items = respBody.items
-        const operations = items.reduce((operations, item) => {
-          const pathParts = item.key.split('/')
-          const second = pathParts[1]
-          if (second && second !== name) {
-            if (days > 0) {
-              operations.push(qiniu.rs.deleteAfterDaysOp(
-                this.bucket, item.key, days))
-            } else if (days === 0) {
-              operations.push(qiniu.rs.deleteOp(
+        const operations = items.reduce((current, item) => {
+          if (fileNames[item.key] !== true) {
+            if (this.days > 0) {
+              current.push(qiniu.rs.deleteAfterDaysOp(
+                this.bucket, item.key, this.days))
+            } else if (this.days === 0) {
+              current.push(qiniu.rs.deleteOp(
                 this.bucket, item.key))
             }
           }
-          return operations
+          return current
         }, [])
 
         const nextMarker = respBody.marker
         if (operations.length > 0) {
           this.bucketManager.batch(operations, (err, respBody, respInfo) => {
             if (err) {
-              throw err
+              callback(err)
+              return
             }
             if (parseInt(respInfo.statusCode / 100) === 2) {
               if (nextMarker) {
-                this.cleanIfNot(name, days, nextMarker)
+                this.cleanIfNot(name, days, nextMarker, callback)
+              } else {
+                callback()
               }
             } else {
-              throw new Error(JSON.stringify(respBody))
+              callback(new Error(JSON.stringify(respBody)))
             }
           })
         } else {
           if (nextMarker) {
-            this.cleanIfNot(name, days, nextMarker)
+            this.cleanIfNot(fileNames, path, nextMarker, callback)
+          } else {
+            callback()
           }
         }
       } else {
-        throw new Error(respBody)
+        callback(new Error(respBody))
       }
     })
   }
 }
 
-module.exports = function ({
-  key,
-  secret,
-  bucket,
-  prefix,
-  name,
-  days=7
-}) {
-  const cleaner = new QiniuCleaner({
-    key,
-    secret,
-    bucket,
-    prefix
-  })
-  cleaner.cleanIfNot(name, days)
-}
+module.exports = QiniuCleaner
