@@ -1,4 +1,6 @@
-export default function (obj, path, default_ = '') {
+import slotFilter from './slot'
+
+export default function (obj, path, slot = '-') {
   const parts = path.split('.')
   var partValue = obj
   for (var i = 0; i < parts.length; i++) {
@@ -8,5 +10,5 @@ export default function (obj, path, default_ = '') {
     const part = parts[i]
     partValue = partValue[part]
   }
-  return partValue || default_
+  return slotFilter(partValue, slot)
 }

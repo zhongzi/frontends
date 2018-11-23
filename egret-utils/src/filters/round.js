@@ -1,8 +1,10 @@
-export default function (value, length = 0) {
-  if (value) {
-    value = parseFloat(value)
-  } else {
-    value = 0.0
+export default function (value, length = 0, slot = '-') {
+  if (value === null  || value === undefined) {
+    return slot
   }
-  return value.toFixed(length)
+  const parsed = parseFloat(value)
+  if (isNaN(parsed)) {
+    return slot
+  }
+  return parsed.toFixed(length)
 }
