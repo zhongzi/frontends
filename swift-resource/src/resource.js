@@ -47,6 +47,7 @@ export default function (api, plural, filters = []) {
     return promise
   }
   return {
+    plural: plural,
     list ({query, headers, args, configs = {}}) {
       let promise = api.get(getPlural(undefined, args), query, {
         headers: headers,
