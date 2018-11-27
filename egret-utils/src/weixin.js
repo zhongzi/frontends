@@ -1,6 +1,5 @@
-import queryBuilder from './query'
-
-let weixin = require('weixin-js-sdk')
+const querystring = require('querystring')
+const weixin = require('weixin-js-sdk')
 
 let shareMenus = ['menuItem:share:appMessage',
   'menuItem:share:timeline',
@@ -39,7 +38,7 @@ export default {
     // 构建登录后的跳转页面地址
     let query = to.query || {}
     delete query['code']
-    query = queryBuilder.from(query || {})
+    query = querystring.stringify(query || {})
     let nextPath = relativePath + '#' + to.path
     if (query && query.length > 0) {
       nextPath += '?' + query
