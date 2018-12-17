@@ -375,13 +375,14 @@ export default function (api, default_ = {}) {
         batchedRes = [res]
         resId = res.id
       }
-      batchedRes.forEach(function (res) {
+      batchedRes = batchedRes.filter(function (res) {
         const key = normalizeKey(res.id)
         // 正在保存
         if (getters.getSaveLoadingById(key) === true) {
-          return
+          return false
         }
         commit('saveStart', { key: key })
+        return true
       })
 
       try {
