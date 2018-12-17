@@ -369,9 +369,13 @@ export default function (api, default_ = {}) {
       }
     },
     async save ({ commit, getters, dispatch }, { res, id, syncTag, query, headers, configs, args, success, failure }) {
-      let resId = 'updating'
-      let batchedRes = res
-      if (Object.prototype.toString.call(batchedRes) !== '[object Array]') {
+      let isBatch = Object.prototype.toString.call(res) === '[object Array]'
+      let resId
+      let batchedRes
+      if (isBatch) {
+        batchedRes = res
+        resId = 'updating'
+      } else {
         batchedRes = [res]
         resId = res.id
       }
@@ -384,6 +388,19 @@ export default function (api, default_ = {}) {
         commit('saveStart', { key: key })
         return true
       })
+      if (batchedRes.length === 0) {
+        const err = new Error('请求过快')
+        if (failure) {
+          failure(err)
+          return
+        } else {
+          return Promise.reject(err)
+        }
+      }
+      isBatch = batchedRes.length > 1
+      if (!isBatch) {
+        res = batchedRes[0]
+      }
 
       try {
         let promise
@@ -402,7 +419,7 @@ export default function (api, default_ = {}) {
         }
         const response = await promise
         let responseData = response.data
-        if (Object.prototype.toString.call(responseData) !== '[object Array]') {
+        if (!isBatch) {
           responseData = [responseData]
         }
 
