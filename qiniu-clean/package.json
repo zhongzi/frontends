@@ -1,11 +1,15 @@
 {
   "name": "@jukejia/qiniu-clean",
-  "version": "0.2.1",
+  "version": "1.0.0",
   "main": "index.js",
   "repository": "https://github.com/YLTDco/jukejia-frontends/qiniu-clean",
   "author": "i@4leaf.me",
   "license": "UNLICENSED",
+  "bin": {
+    "qiniu-clean": "./bin/qiniu-clean"
+  },
   "dependencies": {
+    "commander": "^2.19.0",
     "qiniu": "^7.1.7"
   }
 }

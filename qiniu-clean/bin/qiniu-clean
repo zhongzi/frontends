@@ -1,0 +1,41 @@
+#!/usr/bin/env node
+const program = require('commander')
+const fs = require('fs')
+const QiniuCleaner = require('../')
+
+let config = {}
+
+program
+  .version(require('../package.json').version)
+  .arguments('<file> <bucket> <path>')
+  .action(function (file, bucket, path) {
+    config.file = file
+    config.bucket = bucket
+    config.path = path
+  })
+  .option('--days [days]', 'days')
+  .option('--access_key [access key]', 'access key')
+  .option('--secret_key [secret key]', 'secret key')
+  .option('--exclude [exclude]', 'exclude')
+  .parse(process.argv)
+
+qiniuCleaner = new QiniuCleaner({
+  ACCESS_KEY: program.access_key || process.env.QINIU_ACCESS_KEY,
+  SECRET_KEY: program.secret_key || process.env.QINIU_SECRET_KEY,
+  bucket: config.bucket,
+  path: config.path,
+  days: parseInt(program.days)
+})
+
+const includes = JSON.parse(fs.readFileSync(config.file, 'utf8'))
+let exclude = program.exclude
+if (exclude) {
+  exclude = new RegExp(exclude)
+}
+qiniuCleaner.cleanIfNot (includes, exclude, config.path, undefined, function (err) {
+  if (err) {
+    console.error(err)
+  } else {
+    console.log('🍺 finished')
+  }
+})
