@@ -109,7 +109,7 @@ export default function (api, default_ = {}) {
       } else {
         state.lists[key] = state.lists[key].concat(response.data.data)
       }
-      if (response.data.total) {
+      if (response.data.total !== undefined && response.data.total !== null) {
         Vue.set(state.total, key, response.data.total)
       }
       if (response.data.sums) {
