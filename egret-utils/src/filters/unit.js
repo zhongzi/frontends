@@ -14,11 +14,18 @@ export default function (value, counts, units, fixed = 0, slot='-', max = undefi
   counts.every((count, index) => {
     if (parsed >= count) {
       const val = (parsed / (count || 1))
-      str = val.toFixed(0)
-      if (max && str.length < max) {
-        str = val.toFixed(Math.min(max - str.length, fixed)) 
+      str = val.toFixed(fixed)
+      if (max) {
+        str = '' + parseFloat(str)
+        if (str.length < max) {
+          let minFixed = Math.min(max - str.length, fixed)
+          if (minFixed < 0) {
+            minFixed = 0
+          }
+          str = '' + parseFloat(val.toFixed(minFixed))
+        }
       }
-      str = parseFloat(str) + units[index]
+      str = str + units[index]
       return false
     }
     return true

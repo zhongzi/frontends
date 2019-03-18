@@ -370,15 +370,22 @@ export default function (api, default_ = {}) {
     },
     async save ({ commit, getters, dispatch }, { res, id, syncTag, query, headers, configs, args, success, failure }) {
       let isBatch = Object.prototype.toString.call(res) === '[object Array]'
+      let resId
       let batchedRes
       if (isBatch) {
         batchedRes = res
+        if (res[0].id) {
+          resId = 'updating'
+        } else {
+          resId = undefined
+        }
       } else {
         batchedRes = [res]
+        resId = res.id
       }
+
       batchedRes = batchedRes.filter(function (el) {
         const key = normalizeKey(el.id)
-        // 正在保存
         if (getters.getSaveLoadingById(key) === true) {
           return false
         }
@@ -393,19 +400,6 @@ export default function (api, default_ = {}) {
         } else {
           return Promise.reject(err)
         }
-      }
-
-      isBatch = batchedRes.length > 1
-      let resId
-      if (isBatch) {
-        if (batchedRes[0].id) {
-          resId = 'updating'
-        } else {
-          resId = undefined
-        }
-      } else {
-        res = batchedRes[0]
-        resId = res.id
       }
 
       try {
