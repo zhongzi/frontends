@@ -10,9 +10,9 @@
   "scripts": {
     "lint": "NODE_ENV=production eslint --ext .js,.vue src",
     "clean": "rm -rf dist && mkdir dist",
-    "prebuild": "yarn run clean",
+    "prebuild": "npm run clean",
     "build": "babel ./src -d ./dist",
-    "prepublishOnly": "yarn run build"
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.0",
