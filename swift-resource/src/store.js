@@ -1,6 +1,20 @@
 import Vue from 'vue'
-import merge from 'lodash/merge'
 import updateResource from './utils/update_resource'
+
+import isNull from "lodash/isNull";
+import isNaN from "lodash/isNaN";
+import isUndefined from "lodash/isUndefined";
+import mergeWith from 'lodash/mergeWith'
+
+const merge = (object, source) => {
+  return mergeWith(object, source, (objValue, srcValue) => {
+    if(isNull(srcValue) || isNaN(srcValue) || isUndefined(srcValue)) {
+      return objValue;
+    }
+    return srcValue;
+  });
+}
+
 
 const normalizeKey = function (key) {
   if (!key) {
