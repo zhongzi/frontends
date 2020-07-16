@@ -1,6 +1,6 @@
 {
   "name": "@jukejia/swift-resource",
-  "version": "1.2.4",
+  "version": "1.2.6",
   "description": "quick generate restful api and vuex store' ",
   "main": "dist/index.js",
   "typings": "types/index.d.ts",

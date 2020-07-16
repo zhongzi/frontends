@@ -5,6 +5,7 @@ import isNull from "lodash/isNull";
 import isNaN from "lodash/isNaN";
 import isUndefined from "lodash/isUndefined";
 import mergeWith from 'lodash/mergeWith'
+import isEmpty from "lodash/isEmpty";
 
 const merge = (object, source) => {
   return mergeWith(object, source, (objValue, srcValue) => {
@@ -236,8 +237,9 @@ export default function (api, default_ = {}) {
     },
     saveSuccess (state, { key, response }) {
       Vue.set(state.loading.saveds, key, false)
-      const resource = merge(state.resources[key] || {}, response.data)
-      Vue.set(state.resources, key, resource)
+      const resId = isEmpty(key) ? response.data.id : key
+      const resource = merge(state.resources[resId] || {}, response.data)
+      Vue.set(state.resources, resId, resource)
       Vue.set(state.error.saveds, key, null)
     },
     saveFail (state, { key, error }) {
