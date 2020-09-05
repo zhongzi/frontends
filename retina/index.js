@@ -1,6 +1,5 @@
-var res = require('res');
-
-var densities = [1, 2, 3];
+const res = require('res');
+const densities = [1, 2, 3];
 
 const getBestDensity = function () {
   var systemDppx = res.dppx() || 1;
