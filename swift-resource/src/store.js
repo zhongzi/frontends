@@ -40,6 +40,7 @@ export default function (api, default_ = {}) {
     },
     total: {},
     sums: {},
+    counts: {},
     lists: {},
     resources: {}
   }
@@ -60,6 +61,9 @@ export default function (api, default_ = {}) {
     listSums: (state, getters) => {
       return getters.getListSumsByTag('')
     },
+    listCounts: (state, getters) => {
+      return getters.getListCountsByTag('')
+    },
     getListByTag: (state, getters) => (tag) => {
       tag = normalizeKey(tag)
       return state.lists[tag] || []
@@ -78,7 +82,11 @@ export default function (api, default_ = {}) {
     },
     getListSumsByTag: (state, getters) => (tag) => {
       tag = normalizeKey(tag)
-      return state.sums[tag] || 0
+      return state.sums[tag] || {}
+    },
+    getListCountsByTag: (state, getters) => (tag) => {
+      tag = normalizeKey(tag)
+      return state.counts[tag] || {}
     },
     getById: (state, getters) => (id) => {
       id = normalizeKey(id)
@@ -129,6 +137,9 @@ export default function (api, default_ = {}) {
       }
       if (response.data.sums) {
         Vue.set(state.sums, key, response.data.sums)
+      }
+      if (response.data.counts) {
+        Vue.set(state.counts, key, response.data.counts)
       }
       Vue.set(state.error.lists, key, null)
     },
