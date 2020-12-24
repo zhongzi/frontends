@@ -7,7 +7,7 @@ function build (current) {
   })
 }
 
-function get ({next, params, query}) {
+function get ({next, params, query, override = false}) {
   try {
     if (typeof next === 'string' || next instanceof String) {
       next = JSON.parse(next)
@@ -18,9 +18,8 @@ function get ({next, params, query}) {
     if (query) {
       next.query = next.query || {}
       for (let key in query) {
-        if ((key in next.query) || key === 'next') {
-          continue
-        }
+        if (key === 'next') continue;
+        if ((key in next.query) && !override ) continue;
         next.query[key] = query[key]
       }
     }

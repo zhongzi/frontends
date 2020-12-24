@@ -11,6 +11,15 @@ export default function (Router) {
     return nextRoute.build(from)
   }
 
+  Router.prototype.updateNext = function ({next, params, query, override = false}) {
+    return nextRoute.get({
+      next: next,
+      params: params,
+      query: query,
+      override: override
+    })
+  }
+
   Router.prototype.pushWithNext = function (route, onComplete, onAbort, from) {
     let query = route.query
     if (!query) {
@@ -31,11 +40,12 @@ export default function (Router) {
     this.replace(route, onComplete, onAbort)
   }
 
-  Router.prototype.pushRawNext = function ({next, params, query, replace = false}, onComplete, onAbort) {
-    next = nextRoute.get({
+  Router.prototype.pushRawNext = function ({next, params, query, replace = false, override = false}, onComplete, onAbort) {
+    next = this.updateNext({
       next: next,
       params: params,
-      query: query
+      query: query,
+      override: override,
     })
     if (typeof next === 'string' || next instanceof String) {
       if (next.indexOf('http://') || next.indexOf('https://')) {
@@ -50,7 +60,7 @@ export default function (Router) {
     }
   }
 
-  Router.prototype.pushNext = function (current, replace = false, onComplete, onAbort) {
+  Router.prototype.pushNext = function ({ current, replace = false, override = false}, onComplete, onAbort) {
     let next = current.query.next
     if (!next) {
       return false
@@ -58,7 +68,8 @@ export default function (Router) {
     this.pushRawNext({
       next: next,
       replace: replace,
-      query: current.query
+      query: current.query,
+      override: override,
     }, onComplete, onAbort)
     return true
   }
